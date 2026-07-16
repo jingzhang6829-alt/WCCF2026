@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026华盛顿中国文化节｜现场搭建物料准备</title>
+<style>
+:root{--red:#cf3b31;--red-soft:#fff1ef;--blue:#1e6eb5;--blue-soft:#edf6ff;--green:#30845a;--green-soft:#edf8f1;--ink:#18241f;--muted:#66716c;--line:#d9e1dc;--paper:#fff;--bg:#f3f6f4;--gold:#d69d2e;--shadow:0 18px 55px rgba(27,48,38,.11)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","Microsoft YaHei",Arial,sans-serif}
+button,input{font:inherit}.shell{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100vh}
+aside{position:sticky;top:0;height:100vh;overflow:auto;background:#17251f;color:#fff;padding:24px 18px}.brand{font-size:18px;font-weight:900;line-height:1.35}.brand small{display:block;margin-top:7px;color:#bbcbc2;font-size:12px;font-weight:600;letter-spacing:.08em}
+.tools{display:grid;gap:9px;margin:24px 0 18px}.tools input{width:100%;border:1px solid #52645b;background:#22352c;color:#fff;border-radius:10px;padding:10px 12px;outline:none}.tools input::placeholder{color:#aebdb5}.tools button{border:1px solid #fff;background:#fff;color:#17251f;border-radius:10px;padding:9px 10px;font-weight:800;cursor:pointer}.tools button.ghost{background:transparent;color:#fff;border-color:#52645b}
+.progress{padding:12px;border:1px solid #3d5147;background:#20342a;border-radius:12px;font-size:13px;margin-bottom:18px}.progress strong{font-size:22px;display:block}.progress-track{height:6px;background:#40544a;border-radius:99px;overflow:hidden;margin-top:8px}.progress-fill{height:100%;width:0;background:#f0c46a;transition:.25s}
+nav a{display:block;color:#cad6d0;text-decoration:none;padding:8px 10px;border-radius:8px;margin:2px 0;font-size:14px}nav a:hover,nav a.active{background:#2b4237;color:#fff}main{padding:30px clamp(18px,4vw,58px) 80px;max-width:1500px;width:100%;margin:auto}
+.hero{position:relative;overflow:hidden;background:#17251f;color:#fff;border-radius:22px;padding:34px 36px;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;right:-80px;top:-150px;background:radial-gradient(circle,rgba(214,157,46,.38),rgba(214,157,46,0) 68%)}.eyebrow{color:#f0c46a;font-weight:900;letter-spacing:.12em;font-size:12px}.hero h1{font-size:clamp(30px,4vw,50px);line-height:1.15;margin:10px 0 12px;max-width:780px}.hero p{margin:0;color:#cad6d0;max-width:760px}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.pill{border:1px solid #52645b;border-radius:999px;padding:4px 10px;font-size:13px;color:#e8efeb}
+.section{margin-top:26px}.section-head{display:flex;gap:12px;align-items:end;justify-content:space-between;margin-bottom:12px}.section h2{font-size:25px;line-height:1.25;margin:0}.section-head p{margin:0;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:18px}.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi strong{font-size:31px;line-height:1.2}.kpi em{font-style:normal;color:var(--muted);font-size:13px}
+.notice{margin-top:14px;padding:13px 15px;border-left:4px solid var(--gold);background:#fff9e9;border-radius:9px;color:#69501d}
+.overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.region-summary,.region-card{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden}.region-summary{padding:18px;border-top:5px solid var(--accent)}.region-summary h3{margin:0;font-size:19px}.region-summary .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.region-summary .nums div{background:var(--soft);border-radius:10px;padding:9px;text-align:center}.nums strong{display:block;font-size:22px}.nums span{color:var(--muted);font-size:12px}
+.region-card{margin-top:16px;border-top:6px solid var(--accent)}.region-title{padding:20px 22px 13px;background:linear-gradient(120deg,var(--soft),#fff)}.region-title h3{margin:0;font-size:23px}.region-title p{margin:3px 0 0;color:var(--muted)}.task-list{padding:8px 18px 18px}.task{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:11px;padding:14px 4px;border-bottom:1px solid #edf0ee;align-items:start}.task:last-child{border-bottom:0}.task input{width:19px;height:19px;margin-top:3px;accent-color:var(--accent)}.task h4{margin:0 0 2px;font-size:16px}.task p{margin:0;color:#4f5b55}.task .qty{white-space:nowrap;background:var(--soft);color:var(--accent);font-weight:900;border-radius:999px;padding:4px 9px;font-size:13px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}table{border-collapse:collapse;width:100%;min-width:860px}th,td{border-bottom:1px solid var(--line);padding:11px 12px;text-align:left;vertical-align:top}th{background:#22352c;color:#fff;font-size:13px;position:sticky;top:0}tbody tr:hover td{background:#fffbed}td.num{text-align:center;font-weight:800}.tag{display:inline-block;border-radius:999px;padding:3px 8px;font-weight:800;font-size:12px}.tag.red{background:var(--red-soft);color:var(--red)}.tag.blue{background:var(--blue-soft);color:var(--blue)}.tag.green{background:var(--green-soft);color:var(--green)}
+.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.check-item{display:flex;gap:10px;background:#fff;border:1px solid var(--line);padding:14px;border-radius:12px}.check-item input{width:18px;height:18px;flex:none;margin-top:3px}.check-item strong{display:block}.check-item span{color:var(--muted);font-size:13px}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:34px}
+.red{--accent:var(--red);--soft:var(--red-soft)}.blue{--accent:var(--blue);--soft:var(--blue-soft)}.green{--accent:var(--green);--soft:var(--green-soft)}
+@media(max-width:900px){.shell{display:block}aside{position:relative;height:auto}.tools{grid-template-columns:1fr 1fr}.tools input{grid-column:1/-1}nav{display:none}main{padding:18px 12px 60px}.hero{padding:25px 20px}.kpis{grid-template-columns:repeat(2,1fr)}.overview{grid-template-columns:1fr}.check-grid{grid-template-columns:1fr}.task{grid-template-columns:28px minmax(0,1fr)}.task .qty{grid-column:2;justify-self:start}}
+@media print{aside{display:none}.shell{display:block}body{background:#fff;font-size:10pt}main{padding:0;max-width:none}.hero{box-shadow:none;border-radius:0;padding:18px;background:#17251f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.hero h1{font-size:25pt}.kpis{grid-template-columns:repeat(4,1fr)}.section{break-inside:auto}.region-card,.region-summary,.kpi,.check-item{box-shadow:none;break-inside:avoid}.overview{grid-template-columns:repeat(3,1fr)}.task{padding:8px 3px}.task input{appearance:none;width:14px;height:14px;border:1px solid #555}.task input:checked:after{content:"✓";font-size:12px;position:relative;left:1px;top:-4px}.footer{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+  <div class="brand">2026 华盛顿中国文化节<small>现场搭建 · 物料准备任务单</small></div>
+  <div class="tools">
+    <input id="search" type="search" placeholder="搜索帐篷编号、区域或任务…">
+    <button onclick="window.print()">打印 / 保存 PDF</button>
+    <button class="ghost" id="clear">清除勾选</button>
+  </div>
+  <div class="progress"><strong id="progressText">0 / 0</strong>现场任务已完成<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div>
+  <nav><a href="#overview">物料总览</a><a href="#red-region">地段一 · 红色</a><a href="#blue-region">地段二 · 蓝色</a><a href="#green-region">地段三 · 绿色</a><a href="#allocation">明细分配</a><a href="#acceptance">验收要点</a></nav>
+</aside>
+<main>
+  <header class="hero">
+    <div class="eyebrow">ON-SITE BUILD · MATERIAL READINESS</div>
+    <h1>现场搭建物料准备任务单</h1>
+    <p>按三个地段组织帐篷、桌椅、舞台配套与宣传物料。用于装车排序、现场分配、搭建勾验及清场回收。</p>
+    <div class="meta"><span class="pill">活动日期：2026-08-29</span><span class="pill">地点：Pennsylvania Avenue, 3rd–4th St</span><span class="pill">依据：现场搭建任务单 v1.2</span></div>
+  </header>
+  <section class="section" id="overview">
+    <div class="section-head"><div><h2>全场物料总览</h2><p>按任务单配置核算；桌椅含舞台与观众席专项数量。</p></div></div>
+    <div class="kpis"><div class="kpi"><span>帐篷</span><strong>97</strong><em>顶</em></div><div class="kpi"><span>长条桌</span><strong>194</strong><em>张</em></div><div class="kpi"><span>折叠椅</span><strong>550</strong><em>把</em></div><div class="kpi"><span>宣传 / 签名背景板</span><strong>3+</strong><em>块（另含舞台背景板）</em></div></div>
+    <div class="notice"><strong>数量校核：</strong>绿色地段为 144 把帐篷配置椅 + 122 把第一舞台观众席椅 = <strong>266 把</strong>；与全场 550 把总数一致。</div>
+    <div class="overview" style="margin-top:14px">
+      <article class="region-summary red"><h3>地段一 · 红色</h3><div class="nums"><div><strong>30</strong><span>帐篷</span></div><div><strong>60</strong><span>桌</span></div><div><strong>160</strong><span>椅</span></div></div></article>
+      <article class="region-summary blue"><h3>地段二 · 蓝色</h3><div class="nums"><div><strong>31</strong><span>帐篷</span></div><div><strong>62</strong><span>桌</span></div><div><strong>124</strong><span>椅</span></div></div></article>
+      <article class="region-summary green"><h3>地段三 · 绿色</h3><div class="nums"><div><strong>36</strong><span>帐篷</span></div><div><strong>72</strong><span>桌</span></div><div><strong>266</strong><span>椅</span></div></div></article>
+    </div>
+  </section>
+  <section class="section region-card red" id="red-region" data-search><div class="region-title"><h3>地段一（红色区域）</h3><p>第二舞台侧、宾夕法尼亚大道西北侧上半段</p></div><div class="task-list" id="redTasks"></div></section>
+  <section class="section region-card blue" id="blue-region" data-search><div class="region-title"><h3>地段二（蓝色区域）</h3><p>上方蓝色区块的美食区及后勤保障</p></div><div class="task-list" id="blueTasks"></div></section>
+  <section class="section region-card green" id="green-region" data-search><div class="region-title"><h3>地段三（绿色区域）</h3><p>第一舞台侧、下方大面积绿色区块</p></div><div class="task-list" id="greenTasks"></div></section>
+  <section class="section" id="allocation">
+    <div class="section-head"><div><h2>地段物料分配明细</h2><p>用于装车、卸货、分区签收与回收复核。</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th>地段</th><th>帐篷编号</th><th>帐篷</th><th>长条桌</th><th>折叠椅</th><th>专项物料</th></tr></thead><tbody>
+      <tr data-search><td><span class="tag red">地段一</span></td><td>A1–A10、B1–B10、G1–G3、H1–H6、T1</td><td class="num">30</td><td class="num">60</td><td class="num">160</td><td>第二舞台乐队椅 40；S1、S2 背景板；第二舞台背景板</td></tr>
+      <tr data-search><td><span class="tag blue">地段二</span></td><td>C1–C25、P1–P2、V1–V4</td><td class="num">31</td><td class="num">62</td><td class="num">124</td><td>C 区每帐篷先配 1桌2椅；另集中待分配 25桌50椅</td></tr>
+      <tr data-search><td><span class="tag green">地段三</span></td><td>A11–A20、B11–B18、E1–E8、F1–F2、D1–D7、M1</td><td class="num">36</td><td class="num">72</td><td class="num">266</td><td>第一舞台观众席 122 椅；12m×1m 横幅；VIP 签名背景板</td></tr>
+      <tr><td><strong>全场</strong></td><td></td><td class="num"><strong>97</strong></td><td class="num"><strong>194</strong></td><td class="num"><strong>550</strong></td><td></td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="section" id="acceptance"><div class="section-head"><div><h2>现场验收要点</h2><p>建议由地段负责人完成后逐项勾选。</p></div></div><div class="check-grid" id="acceptanceList"></div></section>
+  <div class="footer">2026 华盛顿中国文化节 · 现场搭建物料准备 · 网页执行版</div>
+</main>
+</div>
+<script>
+(function(){
+  var regions={
+    red:[["A区 A1–A10","搭建10顶帐篷；每顶2桌4椅；安装门楣。","10帐篷 · 20桌 · 40椅"],["技术帐篷 T1","位于A10与A11之间；配置2桌4椅。","1帐篷 · 2桌 · 4椅"],["宣传背景板 S1","紧靠技术帐篷安装，规格6m×3m。","1块"],["B区 B1–B10","搭建10顶帐篷；每顶2桌4椅；安装门楣。","10帐篷 · 20桌 · 40椅"],["宣传背景板 S2","位于B10与B11之间安装，规格6m×3m。","1块"],["G区 第二舞台","搭建G1–G3，每顶2桌4椅；设置6m×3m背景板；另配乐队椅40把。","3帐篷 · 6桌 · 52椅"],["H区 文化艺术中心","搭建H1–H6，每顶2桌4椅。","6帐篷 · 12桌 · 24椅"]],
+    blue:[["C区 美食区","搭建C1–C25并安装门楣；每顶先配1桌2椅。","25帐篷 · 25桌 · 50椅"],["C区 待分配桌椅","其余桌椅集中放在指定区域，按现场需求调配。","25桌 · 50椅"],["P–V 摄影 / 媒体 / 后勤","搭建P1–P2、V1–V4；每顶2桌4椅。","6帐篷 · 12桌 · 24椅"]],
+    green:[["A区 A11–A20","搭建10顶帐篷；每顶2桌4椅；安装门楣。","10帐篷 · 20桌 · 40椅"],["B区 B11–B18","搭建8顶帐篷；每顶2桌4椅；安装门楣。","8帐篷 · 16桌 · 32椅"],["E区 特别商务区","搭建E1–E8；每顶2桌4椅；安装门楣。","8帐篷 · 16桌 · 32椅"],["F区 VIP接待区","搭建F1–F2；每顶2桌4椅；安装门楣；签名背景板固定在帐篷架上。","2帐篷 · 4桌 · 8椅"],["M1 医疗帐篷","靠近E1搭建；配置2桌4椅。","1帐篷 · 2桌 · 4椅"],["D区 舞台帐篷","D1–D3供导演/技术组，D4–D7为化妆区；每顶2桌4椅；D4–D7四面遮挡。","7帐篷 · 14桌 · 28椅"],["第一舞台横幅","舞台前沿悬挂文化节横幅，规格12m×1m。","1条"],["第一舞台观众席","10排共122座：第1排15座；第2–6排各14座并留中间过道；第7–10排两侧各4座，中间留摄影台。","122椅"]]
+  };
+  var acceptance=[["帐篷定位","编号、数量与现场分地段图一致，固定可靠。"],["桌椅数量","分区数量与本页物料明细一致，备用桌椅独立堆放。"],["门楣与背景板","A、B、C、E、F区门楣完整；背景板尺寸和位置正确。"],["舞台专项","第二舞台乐队40椅到位；第一舞台122座按排布要求落位。"],["化妆区遮挡","D4–D7四面遮挡完整、稳固，出入口可正常使用。"],["装车与签收","按地段分车/分批装载，卸货顺序与搭建顺序一致，并完成签收。"],["回收标识","帐篷、桌椅、横幅、背景板均有地段/区域标签，便于清场回收。"],["安全复核","帐篷配重、背景板固定、通道和摄影台预留均符合现场安全要求。"]];
+  var prefix="wccf-build-v12:";
+  function esc(s){return s.replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+  function taskHtml(item,key){return '<label class="task" data-search><input type="checkbox" data-key="'+key+'"><div><h4>'+esc(item[0])+'</h4><p>'+esc(item[1])+'</p></div><span class="qty">'+esc(item[2])+'</span></label>'}
+  Object.keys(regions).forEach(function(region){document.getElementById(region+"Tasks").innerHTML=regions[region].map(function(x,i){return taskHtml(x,region+"-"+i)}).join("")});
+  document.getElementById("acceptanceList").innerHTML=acceptance.map(function(x,i){return '<label class="check-item" data-search><input type="checkbox" data-key="accept-'+i+'"><div><strong>'+esc(x[0])+'</strong><span>'+esc(x[1])+'</span></div></label>'}).join("");
+  var boxes=Array.from(document.querySelectorAll('input[type="checkbox"][data-key]'));
+  function update(){var done=boxes.filter(function(x){return x.checked}).length;document.getElementById("progressText").textContent=done+" / "+boxes.length;document.getElementById("progressFill").style.width=(boxes.length?done/boxes.length*100:0)+"%"}
+  boxes.forEach(function(box){box.checked=localStorage.getItem(prefix+box.dataset.key)==="1";box.addEventListener("change",function(){localStorage.setItem(prefix+box.dataset.key,box.checked?"1":"0");update()})});update();
+  document.getElementById("clear").addEventListener("click",function(){if(!confirm("清除本页所有勾选记录？"))return;boxes.forEach(function(box){box.checked=false;localStorage.removeItem(prefix+box.dataset.key)});update()});
+  document.getElementById("search").addEventListener("input",function(e){var q=e.target.value.trim().toLowerCase();document.querySelectorAll("[data-search]").forEach(function(el){el.classList.toggle("hidden",!!q&&!el.textContent.toLowerCase().includes(q))})});
+  var links=Array.from(document.querySelectorAll("nav a"));var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.remove("active")});var a=document.querySelector('nav a[href="#'+e.target.id+'"]');if(a)a.classList.add("active")}})},{rootMargin:"-20% 0px -70% 0px"});links.forEach(function(a){var el=document.querySelector(a.getAttribute("href"));if(el)obs.observe(el)});
+})();
+</script>
+</body>
+</html>
