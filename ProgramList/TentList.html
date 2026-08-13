@@ -2,231 +2,1383 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>场地分配· 第24届华盛顿中国文化节</title>
+<!--
+  =========================================================================
+  第24届华盛顿中国文化节   (v3)
+  24th Washington China Culture Festival · Site Map
+  3rd-4th st. Constitution Ave. NW, Washington, DC 20001  ·  8/29/2026
+  =========================================================================
+  v3 changes:
+    • Home page uses the actual venue-map.jpg as the background.
+    • An SVG overlay sits on top with one transparent <a> per zone, so
+      clicks are precisely targeted to each zone in the image.
+    • The SVG viewBox is 0 0 2954 1478, matching the image's native
+      dimensions, so hotspots scale perfectly with the image at any
+      screen size.
+    • Detail pages updated to match the new zone names (文创/商展/创意市集
+      A1-A20, 中华美食城 C1-C25, 合作伙伴展区 E1-E8, 文化节中心区 H1-H6,
+      后勤保障 V1-V6, etc.) and the date 8/29/2026.
 
-<title>第24届华盛顿中国文化节帐篷分配</title>
+  FILES
+    • This file:          2026-china-culture-festival-map-v3.html
+    • Map image alongside it: venue-map.jpg
+    Both must live in the same folder when you publish.
 
+  TUNING HOTSPOT POSITIONS
+    If a hotspot doesn't sit exactly over its zone in the image, edit
+    the coordinates inside the <svg> overlay. Coordinates are in image
+    pixels (the image is 2954 wide × 1478 tall).
+  =========================================================================
+-->
 <style>
-html, body {
+  /* ============================================================
+     Design tokens
+     ============================================================ */
+  :root {
+    --page:      #ECE7DA;
+    --paper:     #FFFFFF;
+    --ink:       #163C6E;
+    --ink-soft:  #5F6E84;
+    --rule:      #D9E1EC;
+
+    /* Zone palette (sampled from the new map) */
+    --zone-a:    #C2877A;   /* 文创 / 创意市集 (pink salmon)        */
+    --zone-b:    #C9A85A;   /* 中华文化展示区 (warm yellow)         */
+    --zone-c:    #C77A5C;   /* 中华美食城 (terracotta)              */
+    --zone-d:    #8B5A4A;   /* 舞台第一 (brown)                     */
+    --zone-e:    #8AA85F;   /* 合作伙伴展区 (olive green)           */
+    --zone-g:    #4A7064;   /* 舞台第二 (dark teal)                 */
+    --zone-h:    #7AAA92;   /* 文化节中心区 (sage)                  */
+    --zone-v:    #7DB59E;   /* 后勤保障 (mint)                      */
+    --zone-vip:  #C9A85A;   /* VIP 接待区                           */
+    --zone-m:    #DC3545;   /* 医疗 (red cross)                     */
+    --zone-tech: #5F6E84;   /* Tech Booth                           */
+
+    --shadow: 0 1px 0 rgba(22,60,110,.05), 0 8px 28px rgba(22,60,110,.08);
+    --radius: 14px;
+  }
+
+  /* ============================================================
+     Base
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
     margin: 0;
-    padding: 0;
-    width: 100%;
-    background: #000;
-    color: #fff;
-    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-}
-
-.header {
-    position: sticky;
-    top: 0;
-    background: rgba(0,0,0,0.9);
-    backdrop-filter: blur(4px);
-    padding: 14px 12px 10px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    z-index: 10;
-}
-
-.header h1 {
-    margin: 0 0 8px;
-    font-size: 18px;
-}
-
-.back {
-    display: inline-block;
-    padding: 5px 14px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    font-size: 13px;
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.4);
-}
-
-.content {
-    padding: 4px 8px 40px;
-}
-
-.section {
-    margin: 18px 0;
-}
-
-.section h2 {
+    background: var(--page);
+    color: var(--ink);
+    font-family:
+      "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+      "Source Han Sans CN", "Noto Sans CJK SC",
+      "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 16px;
-    margin: 0 0 6px 4px;
-    color: #ffd54a;
-    border-left: 4px solid #ffd54a;
-    padding-left: 8px;
-}
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    background: rgba(255,255,255,0.05);
-}
+  /* ============================================================
+     View switching
+     ============================================================ */
+  .detail-view { display: none; }
+  .detail-view:target { display: block; }
+  body:has(.detail-view:target) .home-view { display: none; }
 
-th, td {
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 6px 6px;
-    text-align: left;
-    vertical-align: top;
-    word-break: break-word;
-}
-
-th {
-    background: rgba(255,255,255,0.12);
-    white-space: nowrap;
-}
-
-td.num {
+  /* ============================================================
+     Header
+     ============================================================ */
+  .site-header {
+    background: var(--ink);
+    color: #FFFFFF;
+    padding: 16px 22px;
     text-align: center;
-    white-space: nowrap;
-}
+  }
+  .site-header .zh {
+    margin: 0;
+    font-size: clamp(18px, 3.4vw, 26px);
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+  .site-header .en {
+    margin: 4px 0 0;
+    font-size: 12px;
+    letter-spacing: .14em;
+    opacity: .72;
+  }
 
-tr:nth-child(even) td {
-    background: rgba(255,255,255,0.03);
-}
+  /* ============================================================
+     Layout
+     ============================================================ */
+  main {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 22px 16px 80px;
+  }
+
+  /* ============================================================
+     Map container — image with SVG overlay
+     ============================================================ */
+  .map-container {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--paper);
+    line-height: 0;          /* removes inline-image gap                */
+  }
+  .map-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .map-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Hotspot styling — invisible by default, highlighted on hover/focus */
+  .hotspot {
+    fill: rgba(22, 60, 110, 0);
+    stroke: rgba(22, 60, 110, 0);
+    stroke-width: 10;
+    stroke-linejoin: round;
+    cursor: pointer;
+    transition: fill .18s, stroke .18s;
+    rx: 14;
+    ry: 14;
+  }
+  /* Hover/focus: tint with the zone's color (set via CSS var per zone) */
+  .map-overlay a:hover .hotspot,
+  .map-overlay a:focus .hotspot,
+  .map-overlay a.is-highlighted .hotspot {
+    fill: var(--hot-fill, rgba(22, 60, 110, .14));
+    stroke: var(--hot-stroke, rgba(22, 60, 110, .85));
+  }
+
+  /* Per-zone hotspot color */
+  .map-overlay a[data-zone="a"]   { --hot-fill: rgba(194,135,122,.22); --hot-stroke: rgba(160,90,75,.95); }
+  .map-overlay a[data-zone="b"]   { --hot-fill: rgba(201,168,90,.26);  --hot-stroke: rgba(155,120,40,.95); }
+  .map-overlay a[data-zone="c"]   { --hot-fill: rgba(199,122,92,.22);  --hot-stroke: rgba(160,75,50,.95); }
+  .map-overlay a[data-zone="d"]   { --hot-fill: rgba(139,90,74,.22);   --hot-stroke: rgba(80,45,30,.95); }
+  .map-overlay a[data-zone="e"]   { --hot-fill: rgba(138,168,95,.24);  --hot-stroke: rgba(85,120,40,.95); }
+  .map-overlay a[data-zone="g"]   { --hot-fill: rgba(74,112,100,.22);  --hot-stroke: rgba(30,70,60,.95); }
+  .map-overlay a[data-zone="h"]   { --hot-fill: rgba(122,170,146,.22); --hot-stroke: rgba(60,120,90,.95); }
+  .map-overlay a[data-zone="v"]   { --hot-fill: rgba(125,181,158,.22); --hot-stroke: rgba(60,130,100,.95); }
+  .map-overlay a[data-zone="vip"] { --hot-fill: rgba(201,168,90,.26);  --hot-stroke: rgba(155,120,40,.95); }
+  .map-overlay a[data-zone="m"]   { --hot-fill: rgba(220,53,69,.22);   --hot-stroke: rgba(180,30,45,.95); }
+  .map-overlay a[data-zone="tech"]{ --hot-fill: rgba(95,110,132,.22);  --hot-stroke: rgba(50,65,90,.95); }
+
+  /* Tap hint */
+  .tap-hint {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin: 0 0 12px;
+  }
+
+  /* ============================================================
+     Legend
+     ============================================================ */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-top: 22px;
+  }
+  .legend a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+    transition: transform .15s;
+    min-height: 56px;
+  }
+  .legend a:hover { transform: translateY(-1px); }
+  .legend .badge {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    flex: none;
+    color: #FFF;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .legend .zh { display: block; font-weight: 600; font-size: 14px; }
+  .legend .en { display: block; font-size: 11px; color: var(--ink-soft); }
+
+  /* ============================================================
+     Detail view
+     ============================================================ */
+  .detail-view { animation: fade .18s ease-out; }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .detail-head {
+    display: flex; align-items: center; gap: 14px;
+    padding: 22px 24px; border-radius: var(--radius);
+    color: #FFF; margin-bottom: 22px; flex-wrap: wrap;
+  }
+  .detail-head .tag {
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase; opacity: .85;
+  }
+  .detail-head .zh {
+    margin: 4px 0 0; font-size: clamp(22px, 3.4vw, 32px); line-height: 1.15; font-weight: 800;
+  }
+  .detail-head .en {
+    margin: 4px 0 0; font-size: 13px; letter-spacing: .1em; opacity: .82;
+  }
+  .detail-head .letter {
+    font-size: 56px; font-weight: 900; line-height: 1; opacity: .88; margin-left: auto;
+  }
+  #area-a   .detail-head { background: var(--zone-a);   }
+  #area-b   .detail-head { background: var(--zone-b);   color: #3A2E10; }
+  #area-c   .detail-head { background: var(--zone-c);   }
+  #area-d   .detail-head { background: var(--zone-d);   }
+  #area-e   .detail-head { background: var(--zone-e);   color: #1F2A0E; }
+  #area-g   .detail-head { background: var(--zone-g);   }
+  #area-h   .detail-head { background: var(--zone-h);   color: #143626; }
+  #area-v   .detail-head { background: var(--zone-v);   color: #143626; }
+  #area-vip .detail-head { background: var(--zone-vip); color: #3A2E10; }
+  #area-m   .detail-head { background: var(--zone-m);   }
+  #area-tech .detail-head{ background: var(--zone-tech);}
+
+  .detail-grid {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 22px;
+  }
+  @media (max-width: 760px) { .detail-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 22px;
+  }
+  .card h3 {
+    margin: 0 0 14px; font-size: 12px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--ink-soft); font-weight: 700;
+  }
+  .card p:first-of-type { margin-top: 0; }
+  .card p:last-child    { margin-bottom: 0; }
+  .booth-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px;
+  }
+  .booth-grid span {
+    background: var(--booth); color: #FFF; text-align: center;
+    padding: 8px 6px; border-radius: 6px; font-size: 13px;
+    font-weight: 600; font-variant-numeric: tabular-nums;
+  }
+  .vendor-list { list-style: none; padding: 0; margin: 0; }
+  .vendor-list li { padding: 10px 0; border-top: 1px dotted var(--rule); }
+  .vendor-list li:first-child { border-top: 0; padding-top: 0; }
+  .vendor-list strong { display: block; font-size: 15px; }
+  .vendor-list small  { color: var(--ink-soft); font-size: 13px; }
+
+  /* Richer booth list with colored booth-id badge */
+  .exhibit-list { list-style: none; padding: 0; margin: 0; }
+  .exhibit-list li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 14px;
+    padding: 13px 0;
+    border-top: 1px dotted var(--rule);
+    align-items: start;
+  }
+  .exhibit-list li:first-child { border-top: 0; padding-top: 0; }
+  .exhibit-list .booth-id {
+    background: var(--booth, var(--ink-soft));
+    color: var(--booth-text, #FFF);
+    border-radius: 6px;
+    padding: 8px 4px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+    line-height: 1.1;
+    align-self: start;
+  }
+  .exhibit-list .body strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .exhibit-list .body em {
+    display: block;
+    font-style: normal;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .exhibit-list .body small {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 12px;
+    margin-top: 6px;
+    letter-spacing: .02em;
+  }
+  .exhibit-list .body small b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .exhibit-list li.tbd .booth-id {
+    background: transparent;
+    border: 1px dashed var(--rule);
+    color: var(--ink-soft);
+  }
+  .exhibit-list li.tbd .body strong {
+    color: var(--ink-soft);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .schedule { list-style: none; padding: 0; margin: 0; }
+  .schedule li {
+    display: grid; grid-template-columns: 90px 1fr; gap: 14px;
+    padding: 10px 0; border-top: 1px solid var(--rule);
+  }
+  .schedule li:first-child { border-top: 0; padding-top: 0; }
+  .schedule time {
+    font-variant-numeric: tabular-nums; color: var(--ink-soft);
+    font-size: 14px; padding-top: 2px;
+  }
+  .schedule strong { font-weight: 600; display: block; }
+  .schedule small  { color: var(--ink-soft); font-size: 13px; }
+
+  /* ============================================================
+     Home button (visible on detail views)
+     ============================================================ */
+  .home-button {
+    position: fixed; top: 12px; right: 14px; z-index: 10;
+    display: none; width: 48px; height: 48px;
+    background: var(--paper); border-radius: 50%;
+    box-shadow: 0 6px 16px rgba(22,60,110,.18), 0 0 0 1px var(--rule);
+    align-items: center; justify-content: center;
+    text-decoration: none; color: var(--ink);
+    transition: transform .15s;
+  }
+  .home-button:hover { transform: scale(1.06); }
+  .home-button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  body:has(.detail-view:target) .home-button { display: flex; }
+  .home-button svg { width: 22px; height: 22px; }
+
+  /* ============================================================
+     Footer
+     ============================================================ */
+  footer {
+    text-align: center; color: var(--ink-soft); font-size: 13px;
+    padding: 22px; border-top: 1px solid var(--rule); margin-top: 28px;
+  }
+  footer .zh { display: block; }
+  footer .en {
+    display: block; opacity: .7; font-size: 11px;
+    letter-spacing: .14em; margin-top: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .detail-view { animation: none; }
+    * { transition: none !important; }
+  }
 </style>
 </head>
-
 <body>
 
-<div class="header">
-    <h1>帐篷分配表</h1>
-    <a class="back" href="index.html">&larr; 返回首页</a>
-</div>
+<!-- ===================== HEADER ===================== -->
+<header class="site-header">
+  <p class="zh">第24届华盛顿中国文化节</p>
+  <p class="en">24th Washington China Culture Festival · 3rd-4th St. Constitution Ave. NW · 8/29/2026</p>
+</header>
 
-<div class="content">
+<!-- ===================== HOME BUTTON ===================== -->
+<a href="#" class="home-button" aria-label="返回首页 Back to map">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 11l9-8 9 8"/>
+    <path d="M5 10v10h14V10"/>
+    <path d="M10 20v-6h4v6"/>
+  </svg>
+</a>
 
-<div class="section">
-    <h2>A区 · 招商</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>展销内容</th><th>联系人</th></tr>
-        <tr><td class="num">A1</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">A2</td><td>DC Mom</td><td>-</td><td>徐江</td></tr>
-        <tr><td class="num">A3</td><td>天臣干果/王丹</td><td>民族特色食品（袋装）</td><td>缪传奇/徐江</td></tr>
-        <tr><td class="num">A4</td><td>大专联</td><td>-</td><td>缪传奇</td></tr>
-        <tr><td class="num">A5</td><td>华专联</td><td>-</td><td>杨修竹</td></tr>
-        <tr><td class="num">A6</td><td>金典（TELLE）</td><td>文旅产品</td><td>夏祥波</td></tr>
-        <tr><td class="num">A7</td><td>Futurize LLC/Demi Zhang</td><td>教育</td><td>夏祥波</td></tr>
-        <tr><td class="num">A8</td><td>深圳商会/李珊蓉</td><td>文旅产品</td><td>夏祥波</td></tr>
-        <tr><td class="num">A9</td><td>同乡会联合会</td><td>-</td><td>徐江</td></tr>
-        <tr><td class="num">T1</td><td>音响台</td><td>技术支持</td><td>徐洪庆</td></tr>
-        <tr><td class="num">A10</td><td>玉器</td><td>-</td><td>姜岳洋</td></tr>
-        <tr><td class="num">A11</td><td>文旅产品</td><td>-</td><td>李传明</td></tr>
-        <tr><td class="num">A12</td><td>净水器</td><td>-</td><td>夏祥波</td></tr>
-        <tr><td class="num">A13</td><td>香文化、青瓷艺术品鉴</td><td>非遗</td><td>黄静</td></tr>
-        <tr><td class="num">A14</td><td>一心教会</td><td>图片展</td><td>肖水根</td></tr>
-        <tr><td class="num">A15</td><td>芦溪河桃酥</td><td>-</td><td>黄静</td></tr>
-        <tr><td class="num">A16</td><td>茶艺模特表演</td><td>-</td><td>黄雷</td></tr>
-        <tr><td class="num">A17</td><td>General Mortgage Capital Corporation</td><td>-</td><td>缪传奇</td></tr>
-        <tr><td class="num">A18</td><td>李奇力</td><td>-</td><td>李奇力</td></tr>
-        <tr><td class="num">A19</td><td>李奇力</td><td>-</td><td>李奇力</td></tr>
-        <tr><td class="num">A20</td><td>李奇力</td><td>-</td><td>李奇力</td></tr>
-    </table>
-</div>
+<main>
 
-<div class="section">
-    <h2>B区 · 文化展示</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>单位</th><th>负责人</th></tr>
-        <tr><td class="num">B1</td><td>客家文化和外贸(客家三宝)</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">B2</td><td>李奇力</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">B3</td><td>使馆/广西文化展示</td><td>-</td><td>邓瑞兰</td></tr>
-        <tr><td class="num">B4</td><td>Future Reimagined Initiative</td><td>-</td><td>黄静</td></tr>
-        <tr><td class="num">B5</td><td>使馆</td><td>-</td><td>薛春梅</td></tr>
-        <tr><td class="num">B6</td><td>使馆</td><td>-</td><td>薛春梅</td></tr>
-        <tr><td class="num">B7</td><td>使馆</td><td>-</td><td>薛春梅</td></tr>
-        <tr><td class="num">B8</td><td>使馆</td><td>-</td><td>薛春梅</td></tr>
-        <tr><td class="num">B9</td><td>使馆</td><td>-</td><td>薛春梅</td></tr>
-        <tr><td class="num">B10</td><td>华盛顿科技大学</td><td>-</td><td>邹邹</td></tr>
-        <tr><td class="num">B11</td><td>1.中华文化知多少"有奖竞猜活动。通过知识问答、猜成语、你画（划）我猜等游戏，让现场观众了解中国文化。2＂第四届华盛顿青少年作文大赛＂的咨询及推广活动。</td><td>载道</td><td>李峰</td></tr>
-        <tr><td class="num">B12</td><td>围棋</td><td>希望</td><td>苏丽娟</td></tr>
-        <tr><td class="num">B13</td><td>福建簪花</td><td>希望</td><td>苏丽娟</td></tr>
-        <tr><td class="num">B14</td><td>剪纸</td><td>希望</td><td>苏丽娟</td></tr>
-        <tr><td class="num">B15</td><td>贵州少数民族的服饰展示和试穿体验，同时展示非遗特色的民俗物品</td><td>美中</td><td>李晓</td></tr>
-        <tr><td class="num">B16</td><td>互动制作铁丝绒花，筷子夹豆有奖比赛</td><td>美中</td><td>李晓</td></tr>
-        <tr><td class="num">B17</td><td>陶笛</td><td>哈维</td><td>田晶</td></tr>
-        <tr><td class="num">B18</td><td>书法，画脸</td><td>哈维</td><td>田晶</td></tr>
-    </table>
-</div>
+  <!-- ============================================================== -->
+  <!-- HOME VIEW                                                       -->
+  <!-- ============================================================== -->
+  <section id="home" class="view home-view" aria-label="Festival map">
 
-<div class="section">
-    <h2>C区 · 餐饮</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>单位</th><th>负责人</th></tr>
-        <tr><td class="num">C1</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C2</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C3</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C4</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C5</td><td>Lucky Candy</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C6</td><td>冰淇淋+棉花糖</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C7</td><td>天津煎饼果子！</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C8</td><td>Panda Flame Hibachi</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C9</td><td>梁易安 Flaming BBQ</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C10</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C11</td><td>Tea-Do x Chopstixx Cafe</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C12</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C13</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C14</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C15</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C16</td><td>-</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C17</td><td>Teazzi Tea Shop</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C18</td><td>BKA</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C19</td><td>BKA</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C20</td><td>BKA</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C21</td><td>C Taco</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C22</td><td>Takoyaki+Shaken Lemon tea</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C23</td><td>Demi , Tanka：川渝印象：辣子鸡、糖醋排骨、绵绵冰+</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C24</td><td>Yu Noodle</td><td>-</td><td>-</td></tr>
-        <tr><td class="num">C25</td><td>East Dumpling House</td><td>-</td><td>-</td></tr>
-    </table>
-</div>
+    <p class="tap-hint">点击地图上的区域查看详情 · Tap any zone for details</p>
 
-<div class="section">
-    <h2>E区 · 赞助商</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>单位</th><th>负责人</th></tr>
-        <tr><td class="num">E1</td><td>-</td><td>卓教国际</td><td>-</td></tr>
-        <tr><td class="num">E2</td><td>-</td><td>卓教国际</td><td>-</td></tr>
-        <tr><td class="num">E3</td><td>-</td><td>卓教国际</td><td>-</td></tr>
-        <tr><td class="num">E4</td><td>-</td><td>阿斯蒂星/博城中文</td><td>-</td></tr>
-        <tr><td class="num">E5</td><td>-</td><td>Presidential Bank</td><td>-</td></tr>
-        <tr><td class="num">E6</td><td>-</td><td>CCACC</td><td>-</td></tr>
-        <tr><td class="num">E7</td><td>-</td><td>CCACC</td><td>-</td></tr>
-        <tr><td class="num">E8</td><td>-</td><td>JRI Kitchen</td><td>-</td></tr>
-    </table>
-</div>
+    <div class="map-container">
+      <!-- Background image: the venue map (must sit next to this HTML) -->
+      <img src="venue-map.jpg"
+           alt="第24届华盛顿中国文化节"
+           class="map-image"
+           width="2954" height="1478">
 
-<div class="section">
-    <h2>H区 · 中心区</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>单位</th><th>负责人</th></tr>
-        <tr><td class="num">H1</td><td>义工/保安</td><td>-</td><td>缪传奇，杨修竹</td></tr>
-        <tr><td class="num">H2</td><td>指挥部</td><td>-</td><td>何洁，Roy Li</td></tr>
-        <tr><td class="num">H3</td><td>Passport</td><td>-</td><td>李宁</td></tr>
-        <tr><td class="num">H4</td><td>青少年</td><td>-</td><td>李宁</td></tr>
-        <tr><td class="num">H5</td><td>梅张会计所</td><td>-</td><td>张丽清</td></tr>
-        <tr><td class="num">H6</td><td>绘画</td><td>-</td><td>叶承曦</td></tr>
-    </table>
-</div>
+      <!-- ================================================== -->
+      <!-- Click hotspots over the image                       -->
+      <!-- viewBox matches image dimensions, so coordinates    -->
+      <!-- are in image pixels (2954 × 1478).                  -->
+      <!-- ================================================== -->
+      <svg class="map-overlay"
+           viewBox="0 0 2954 1478"
+           xmlns="http://www.w3.org/2000/svg"
+           aria-label="Clickable zones">
 
-<div class="section">
-    <h2>V区 · 后勤</h2>
-    <table>
-        <tr><th>号码</th><th>用途</th><th>单位</th><th>负责人</th></tr>
-        <tr><td class="num">V1</td><td>后勤</td><td>-</td><td>蔡春生</td></tr>
-        <tr><td class="num">V2</td><td>后勤</td><td>-</td><td>蔡春生</td></tr>
-        <tr><td class="num">V3</td><td>后勤</td><td>-</td><td>蔡春生</td></tr>
-        <tr><td class="num">V4</td><td>后勤</td><td>-</td><td>蔡春生</td></tr>
-        <tr><td class="num">V5</td><td>摄影</td><td>-</td><td>孙宏</td></tr>
-        <tr><td class="num">V6</td><td>摄影</td><td>-</td><td>孙宏</td></tr>
-    </table>
-</div>
+        <!-- C — 中华美食城 (curved orange strip, top-right) -->
+        <a href="#area-c" data-zone="c" aria-label="中华美食城 Chinese Food City">
+          <title>中华美食城 (C1-C25)</title>
+          <polygon class="hotspot"
+            points="1390,180 2380,135 2280,520 1300,580"/>
+        </a>
 
-</div>
+        <!-- V — 后勤保障 (sage green triangle) -->
+        <a href="#area-v" data-zone="v" aria-label="后勤保障 Logistics Support">
+          <title>后勤保障 (V1-V6)</title>
+          <polygon class="hotspot"
+            points="2530,415 2685,720 2360,720"/>
+        </a>
+
+        <!-- B (B1-B10) — left yellow strip -->
+        <a href="#area-b" data-zone="b" aria-label="中华文化展示区 B1-B10">
+          <title>中华文化展示区 (B1-B10)</title>
+          <rect class="hotspot" x="320" y="840" width="785" height="155"/>
+        </a>
+
+        <!-- B (B11-B18) — right yellow strip -->
+        <a href="#area-b" data-zone="b" aria-label="中华文化展示区 B11-B18">
+          <title>中华文化展示区 (B11-B18)</title>
+          <rect class="hotspot" x="1880" y="840" width="640" height="155"/>
+        </a>
+
+        <!-- VIP 接待区 — small yellow box -->
+        <a href="#area-vip" data-zone="vip" aria-label="VIP 接待区 VIP Reception">
+          <title>VIP 接待区</title>
+          <rect class="hotspot" x="2530" y="840" width="200" height="155"/>
+        </a>
+
+        <!-- H — 文化节中心区 / 问讯处 (teal strip) -->
+        <a href="#area-h" data-zone="h" aria-label="文化节中心区 Festival Center">
+          <title>文化节中心区 · 问讯处 (H1-H6)</title>
+          <rect class="hotspot" x="525" y="1070" width="675" height="135"/>
+        </a>
+
+        <!-- M — 医疗 (red cross icon) -->
+        <a href="#area-m" data-zone="m" aria-label="医疗急救 First Aid">
+          <title>医疗急救</title>
+          <circle class="hotspot" cx="1730" cy="1130" r="60"/>
+        </a>
+
+        <!-- E — 合作伙伴展区 (green outlined strip) -->
+        <a href="#area-e" data-zone="e" aria-label="合作伙伴展区 Partner Exhibits E1-E8">
+          <title>合作伙伴展区 (E1-E8)</title>
+          <rect class="hotspot" x="1820" y="1080" width="570" height="125"/>
+        </a>
+
+        <!-- A — 文创 / 商展 / 创意市集 (big pink strip) -->
+        <a href="#area-a" data-zone="a" aria-label="文创 商展 创意市集 A1-A20">
+          <title>文创 · 商展 · 创意市集 (A1-A20)</title>
+          <rect class="hotspot" x="380" y="1245" width="2010" height="170"/>
+        </a>
+
+        <!-- Tech Booth — small icon below A -->
+        <a href="#area-tech" data-zone="tech" aria-label="Tech Booth">
+          <title>Tech Booth</title>
+          <rect class="hotspot" x="1070" y="1385" width="200" height="75"/>
+        </a>
+
+        <!-- G — 舞台第二 (dark green vertical, far left) -->
+        <a href="#area-g" data-zone="g" aria-label="舞台第二 Stage 2 G1-G3">
+          <title>舞台第二 (G1-G3)</title>
+          <rect class="hotspot" x="300" y="1085" width="180" height="325"/>
+        </a>
+
+        <!-- D — 舞台第一 (brown vertical, far right) -->
+        <a href="#area-d" data-zone="d" aria-label="舞台第一 Main Stage D1-D9">
+          <title>舞台第一 (D1-D9)</title>
+          <rect class="hotspot" x="2400" y="1085" width="195" height="325"/>
+        </a>
+
+      </svg>
+    </div>
+
+    <!-- ====================== LEGEND ====================== -->
+    <div class="legend" aria-label="Zones">
+      <a href="#area-a" data-zone="a"><span class="badge" style="background:var(--zone-a)">A</span><span><span class="zh">文创 · 创意市集</span><span class="en">Creative Market · A1–A20</span></span></a>
+      <a href="#area-b" data-zone="b"><span class="badge" style="background:var(--zone-b)">B</span><span><span class="zh">中华文化展示区</span><span class="en">Cultural Showcase · B1–B18</span></span></a>
+      <a href="#area-c" data-zone="c"><span class="badge" style="background:var(--zone-c)">C</span><span><span class="zh">中华美食城</span><span class="en">Chinese Food City · C1–C25</span></span></a>
+      <a href="#area-d" data-zone="d"><span class="badge" style="background:var(--zone-d)">D</span><span><span class="zh">舞台第一</span><span class="en">Main Stage · D1–D9</span></span></a>
+      <a href="#area-e" data-zone="e"><span class="badge" style="background:var(--zone-e);color:#1F2A0E">E</span><span><span class="zh">合作伙伴展区</span><span class="en">Partner Exhibits · E1–E8</span></span></a>
+      <a href="#area-g" data-zone="g"><span class="badge" style="background:var(--zone-g)">G</span><span><span class="zh">舞台第二</span><span class="en">Stage 2 · G1–G3</span></span></a>
+      <a href="#area-h" data-zone="h"><span class="badge" style="background:var(--zone-h);color:#143626">H</span><span><span class="zh">文化节中心区 · 问讯处</span><span class="en">Festival Center · H1–H6</span></span></a>
+      <a href="#area-v" data-zone="v"><span class="badge" style="background:var(--zone-v);color:#143626">V</span><span><span class="zh">后勤保障</span><span class="en">Logistics · V1–V6</span></span></a>
+      <a href="#area-vip" data-zone="vip"><span class="badge" style="background:var(--zone-vip);color:#3A2E10">★</span><span><span class="zh">VIP 接待区</span><span class="en">VIP Reception</span></span></a>
+      <a href="#area-m" data-zone="m"><span class="badge" style="background:var(--zone-m)">+</span><span><span class="zh">医疗急救</span><span class="en">First Aid</span></span></a>
+      <a href="#area-tech" data-zone="tech"><span class="badge" style="background:var(--zone-tech)">⚙</span><span><span class="zh">技术服务台</span><span class="en">Tech Booth</span></span></a>
+    </div>
+
+    <!-- ====================== SPECIAL PROGRAMS ====================== -->
+    <div class="card" style="margin-top: 22px; border-left: 4px solid var(--zone-h);">
+      <h3 style="margin: 0 0 14px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;">特色活动项目 · Special Programs</h3>
+      <ul class="exhibit-list" style="--booth: var(--ink); --booth-text: #FFF;">
+        <li>
+          <span class="booth-id" style="background: var(--zone-h); color: #143626;">H6</span>
+          <div class="body">
+            <strong>中国文化节长卷绘画</strong>
+            <em>Long-Scroll Painting · Multi-ethnic collaborative artwork</em>
+            <small>自 2023 年起每年举办；今年新增"各族裔共画中国龙"环节 · Featured collaborative dragon segment new this year · 负责人：<b>叶承曦</b>（绘画组）</small>
+          </div>
+        </li>
+        <li>
+          <span class="booth-id" style="background: var(--zone-b); color: #3A2E10;">B15-B16</span>
+          <div class="body">
+            <strong>长龙与彩带互动表演</strong>
+            <em>Interactive Dragon &amp; Ribbon Dance</em>
+            <small>美中实验学校与来宾互动一起舞动长龙和彩带 · Mei Zhong Experimental School invites guests to dance the dragon and ribbons together</small>
+          </div>
+        </li>
+        <li>
+          <span class="booth-id" style="background: var(--ink); color: #FFF;">B3,B5-B9</span>
+          <div class="body">
+            <strong>中国驻美大使馆专题展示</strong>
+            <em>Chinese Embassy Featured Exhibit · 5 tents</em>
+            <small>五个帐篷 · 位置已确认 B3（广西文化展示）、B5-B9 / Five tents, confirmed at B3 (Guangxi Culture Exhibit) and B5-B9</small>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- DETAIL SECTIONS                                                 -->
+  <!-- ============================================================== -->
+
+  <!-- A · 文创 商展 创意市集 -->
+  <section id="area-a" class="detail-view" aria-label="文创 创意市集 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone A</div><div class="zh">文创 · 商展 · 创意市集</div><div class="en">Cultural Creative Market · A1–A20</div></div>
+      <div class="letter">A</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>文化节最大的展销区域，共设 20 个展位（A1–A20）。汇聚文创产品、文旅商品、民族特色食品、玉器工艺、教育及社团展示，是文化与商业相融的核心市集。</p>
+        <p>The festival's largest market area with 20 booths (A1–A20). Cultural and creative products, tourism, ethnic specialty foods, jade, education, and community organizations — where culture meets commerce.</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-a)">
+        <h3>展位 · Booths</h3>
+        <div class="booth-grid">
+          <span>A1</span><span>A2</span><span>A3</span><span>A4</span><span>A5</span>
+          <span>A6</span><span>A7</span><span>A8</span><span>A9</span><span>A10</span>
+          <span>A11</span><span>A12</span><span>A13</span><span>A14</span><span>A15</span>
+          <span>A16</span><span>A17</span><span>A18</span><span>A19</span><span>A20</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-a); --booth-text: #3D2A24;">
+        <h3>商家名单 · Exhibitors</h3>
+        <ul class="exhibit-list">
+          <li class="tbd"><span class="booth-id">A1</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li>
+            <span class="booth-id">A2</span>
+            <div class="body">
+              <strong>DC Mom</strong>
+              <small>推荐：<b>徐江</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A3</span>
+            <div class="body">
+              <strong>民族特色食品（袋装）</strong>
+              <em>Ethnic Specialty Packaged Foods</em>
+              <small>单位：<b>天臣干果 · 王丹</b> · $500 · 推荐：<b>缪传奇 / 徐江</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A4</span>
+            <div class="body">
+              <strong>大专联</strong>
+              <em>Federation of Chinese Higher Education Alumni</em>
+              <small>$500 · 推荐：<b>缪传奇</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A5</span>
+            <div class="body">
+              <strong>华专联</strong>
+              <em>Chinese Professionals Association</em>
+              <small>$500 · 推荐：<b>杨修竹</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A6</span>
+            <div class="body">
+              <strong>文旅产品</strong>
+              <em>Culture &amp; Tourism Products</em>
+              <small>单位：<b>金典</b> · $600 · 推荐：<b>夏祥波</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A7</span>
+            <div class="body">
+              <strong>教育 · Education</strong>
+              <small>单位：<b>Futurize LLC · Demi Zhang</b> · $700 · 推荐：<b>夏祥波</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A8</span>
+            <div class="body">
+              <strong>文旅产品</strong>
+              <em>Culture &amp; Tourism Products</em>
+              <small>单位：<b>深圳商会 · 李珊蓉</b> · $700 · 推荐：<b>夏祥波</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A9</span>
+            <div class="body">
+              <strong>同乡会联合会</strong>
+              <em>Tongxianghui Federation</em>
+              <small>推荐：<b>徐江</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A10</span>
+            <div class="body">
+              <strong>玉器</strong>
+              <em>Jade Items</em>
+              <small>$800 · 推荐：<b>姜岳洋</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">T1</span>
+            <div class="body">
+              <strong>音响台</strong>
+              <em>Audio / Sound Station · Technical Support</em>
+              <small>A10 旁加配帐篷 · Additional tent next to A10 · 负责人：<b>徐洪庆</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A11</span>
+            <div class="body">
+              <strong>文旅产品</strong>
+              <em>Culture &amp; Tourism Products</em>
+              <small>推荐：<b>李传明</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A12</span>
+            <div class="body">
+              <strong>净水器</strong>
+              <em>Water Purifiers</em>
+              <small>推荐：<b>夏祥波</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A13</span>
+            <div class="body">
+              <strong>香文化、青瓷艺术品鉴</strong>
+              <em>Incense Culture &amp; Celadon Appreciation (Intangible Heritage)</em>
+              <small>推荐：<b>黄静</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A14</span>
+            <div class="body">
+              <strong>图片展 · Photo Exhibition</strong>
+              <small>单位：<b>一心教会</b> · $1000 · 推荐：<b>肖水根</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A15</span>
+            <div class="body">
+              <strong>芦溪河桃酥</strong>
+              <em>Luxihe River Walnut Crisp Pastry</em>
+              <small>推荐：<b>黄静</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A16</span>
+            <div class="body">
+              <strong>茶艺模特表演</strong>
+              <em>Tea Ceremony Model Performance</em>
+              <small>推荐：<b>黄雷</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A17</span>
+            <div class="body">
+              <strong>General Mortgage Capital Corporation</strong>
+              <small>推荐：<b>缪传奇</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A18</span>
+            <div class="body">
+              <strong>李奇力</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A19</span>
+            <div class="body">
+              <strong>李奇力</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">A20</span>
+            <div class="body">
+              <strong>李奇力</strong>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; border-left: 4px solid var(--zone-a);">
+        <h3>特别赞助 · Special Sponsorship</h3>
+        <p><strong>国航 · Air China</strong> — 工艺品展览 + 国航宣传 / Handicraft Exhibition + Air China Promotion</p>
+        <p>赞助方式 · Sponsorship: 华盛顿-北京来回经济舱机票一张（作为文化节奖品）<br>One Washington–Beijing round-trip economy-class air ticket, contributed as a festival prize.</p>
+        <p>推荐 · Referred by: <strong>夏祥波</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- B · 中华文化展示区 -->
+  <section id="area-b" class="detail-view" aria-label="中华文化展示区 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone B</div><div class="zh">中华文化展示区</div><div class="en">Chinese Cultural Showcase · B1–B18</div></div>
+      <div class="letter">B</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>中华文化展示区由 <b>中国驻美大使馆</b>、<b>客家文化和外贸</b>、<b>Future Reimagined Initiative</b>、<b>华盛顿科技大学</b>、<b>载道</b>、<b>希望</b>、<b>美中</b>、<b>哈维</b> 等单位合作呈现，分为两组：B1–B10 位于场地西侧，B11–B18 位于场地东侧。使馆专题展示与广西文化展示集中在 B3、B5–B9；西侧还包括客家文化和外贸、Future Reimagined Initiative 及华盛顿科技大学展示；东侧涵盖有奖竞猜及作文比赛推广、围棋、福建簪花、剪纸、贵州少数民族服饰体验、铁丝绒花与筷子夹豆互动、书法、陶笛、画脸等中华传统文化与非物质文化遗产活动。</p>
+        <p>Jointly presented by the Chinese Embassy in the U.S., Hakka Culture &amp; Trade, Future Reimagined Initiative, Washington University of Science and Technology, Zai Dao, Hope, Mei Zhong, and Harvey. B1–B10 on the west side, B11–B18 on the east. Embassy and Guangxi culture exhibits are concentrated at B3 and B5–B9; the west side also includes Hakka culture &amp; trade, Future Reimagined Initiative, and the Washington University of Science and Technology exhibit; the east side features prize quizzes and youth writing competition outreach, Weiqi (Go), Fujian hair flowers, paper cutting, Guizhou ethnic costume try-on, wire velvet flower making and chopstick bean-picking contests, calligraphy, ocarina, and face painting.</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-b)">
+        <h3>展位 · Booths</h3>
+        <div class="booth-grid">
+          <span>B1</span><span>B2</span><span>B3</span><span>B4</span><span>B5</span>
+          <span>B6</span><span>B7</span><span>B8</span><span>B9</span><span>B10</span>
+          <span>B11</span><span>B12</span><span>B13</span><span>B14</span><span>B15</span>
+          <span>B16</span><span>B17</span><span>B18</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-b); --booth-text: #3A2E10;">
+        <h3>展示项目 · Exhibits</h3>
+        <ul class="exhibit-list">
+          <li>
+            <span class="booth-id">B1</span>
+            <div class="body">
+              <strong>客家文化和外贸</strong>
+              <em>Hakka Culture &amp; Trade (客家三宝 · Three Hakka Treasures)</em>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B2</span>
+            <div class="body">
+              <strong>李奇力</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B3</span>
+            <div class="body">
+              <strong>使馆 · 广西文化展示</strong>
+              <em>Chinese Embassy · Guangxi Culture Exhibit</em>
+              <small>负责人：<b>邓瑞兰</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B4</span>
+            <div class="body">
+              <strong>Future Reimagined Initiative</strong>
+              <small>负责人：<b>黄静</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B5</span>
+            <div class="body">
+              <strong>使馆</strong>
+              <em>Chinese Embassy Exhibit</em>
+              <small>负责人：<b>薛春梅</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B6</span>
+            <div class="body">
+              <strong>使馆</strong>
+              <em>Chinese Embassy Exhibit</em>
+              <small>负责人：<b>薛春梅</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B7</span>
+            <div class="body">
+              <strong>使馆</strong>
+              <em>Chinese Embassy Exhibit</em>
+              <small>负责人：<b>薛春梅</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B8</span>
+            <div class="body">
+              <strong>使馆</strong>
+              <em>Chinese Embassy Exhibit</em>
+              <small>负责人：<b>薛春梅</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B9</span>
+            <div class="body">
+              <strong>使馆</strong>
+              <em>Chinese Embassy Exhibit</em>
+              <small>负责人：<b>薛春梅</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B10</span>
+            <div class="body">
+              <strong>华盛顿科技大学</strong>
+              <em>Washington University of Science and Technology</em>
+              <small>负责人：<b>邹邹</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B11</span>
+            <div class="body">
+              <strong>"中华文化知多少"有奖竞猜活动 · 第四届华盛顿青少年作文大赛咨询及推广</strong>
+              <em>"How Much Do You Know About Chinese Culture" Quiz (via trivia, idiom-guessing, and Pictionary-style games) · 4th Washington Youth Writing Competition Outreach</em>
+              <small>单位：<b>载道</b> · 负责人：<b>李峰</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B12</span>
+            <div class="body">
+              <strong>围棋</strong>
+              <em>Weiqi (Go)</em>
+              <small>单位：<b>希望 · Hope</b> · 负责人：<b>苏丽娟</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B13</span>
+            <div class="body">
+              <strong>福建簪花</strong>
+              <em>Fujian Zanhua (Traditional Hair Flowers)</em>
+              <small>单位：<b>希望 · Hope</b> · 负责人：<b>苏丽娟</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B14</span>
+            <div class="body">
+              <strong>剪纸</strong>
+              <em>Chinese Paper Cutting</em>
+              <small>单位：<b>希望 · Hope</b> · 负责人：<b>苏丽娟</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B15</span>
+            <div class="body">
+              <strong>贵州少数民族服饰展示和试穿体验，同时展示非遗特色的民俗物品</strong>
+              <em>Guizhou Ethnic Minority Costume Display &amp; Try-On, plus Intangible-Heritage Folk Items Display</em>
+              <small>单位：<b>美中 · US-China</b> · 负责人：<b>李晓</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B16</span>
+            <div class="body">
+              <strong>互动制作铁丝绒花，筷子夹豆有奖比赛</strong>
+              <em>Interactive Wire Velvet Flower Making · Chopstick Bean-Picking Contest (with Prizes)</em>
+              <small>单位：<b>美中 · US-China</b> · 负责人：<b>李晓</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B17</span>
+            <div class="body">
+              <strong>陶笛</strong>
+              <em>Ocarina</em>
+              <small>单位：<b>哈维 · Harvey</b> · 负责人：<b>田晶</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">B18</span>
+            <div class="body">
+              <strong>书法，画脸</strong>
+              <em>Calligraphy · Face Painting</em>
+              <small>单位：<b>哈维 · Harvey</b> · 负责人：<b>田晶</b></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- C · 中华美食城 -->
+  <section id="area-c" class="detail-view" aria-label="中华美食城 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone C</div><div class="zh">中华美食城</div><div class="en">Chinese Food City · C1–C25</div></div>
+      <div class="letter">C</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>中华美食城共设 25 个摊位（C1–C25），沿场地北侧弧形排列。八大菜系、特色小吃、地方点心、传统饮品一应俱全，带您品尝最地道的中华美食。</p>
+        <p>Twenty-five food stalls (C1–C25) arranged along the northern arc of the venue. Eight regional cuisines, street snacks, traditional desserts, and drinks — the most authentic Chinese flavors.</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-c)">
+        <h3>展位 · Booths</h3>
+        <div class="booth-grid">
+          <span>C1</span><span>C2</span><span>C3</span><span>C4</span><span>C5</span>
+          <span>C6</span><span>C7</span><span>C8</span><span>C9</span><span>C10</span>
+          <span>C11</span><span>C12</span><span>C13</span><span>C14</span><span>C15</span>
+          <span>C16</span><span>C17</span><span>C18</span><span>C19</span><span>C20</span>
+          <span>C21</span><span>C22</span><span>C23</span><span>C24</span><span>C25</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-c); --booth-text: #3D2018;">
+        <h3>美食摊位 · Vendors</h3>
+        <ul class="exhibit-list">
+          <li class="tbd"><span class="booth-id">C1</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C2</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C3</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C4</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li><span class="booth-id">C5</span><div class="body"><strong>Lucky Candy</strong></div></li>
+          <li><span class="booth-id">C6</span><div class="body"><strong>冰淇淋 + 棉花糖</strong><em>Ice Cream &amp; Cotton Candy</em></div></li>
+          <li><span class="booth-id">C7</span><div class="body"><strong>天津煎饼果子！</strong><em>Tianjin Jianbing Guozi (Savory Crepes)</em></div></li>
+          <li><span class="booth-id">C8</span><div class="body"><strong>Panda Flame Hibachi</strong></div></li>
+          <li><span class="booth-id">C9</span><div class="body"><strong>Flaming BBQ</strong><small>负责人：<b>梁易安</b></small></div></li>
+          <li class="tbd"><span class="booth-id">C10</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li><span class="booth-id">C11</span><div class="body"><strong>Tea-Do x Chopstixx Cafe</strong></div></li>
+          <li class="tbd"><span class="booth-id">C12</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C13</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C14</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C15</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li class="tbd"><span class="booth-id">C16</span><div class="body"><strong>待安排 · To be assigned</strong></div></li>
+          <li><span class="booth-id">C17</span><div class="body"><strong>Teazzi Tea Shop</strong></div></li>
+          <li><span class="booth-id">C18</span><div class="body"><strong>BKA</strong></div></li>
+          <li><span class="booth-id">C19</span><div class="body"><strong>BKA</strong></div></li>
+          <li><span class="booth-id">C20</span><div class="body"><strong>BKA</strong></div></li>
+          <li><span class="booth-id">C21</span><div class="body"><strong>C Taco</strong></div></li>
+          <li><span class="booth-id">C22</span><div class="body"><strong>Takoyaki + Shaken Lemon Tea</strong></div></li>
+          <li><span class="booth-id">C23</span><div class="body"><strong>川渝印象</strong><em>辣子鸡 · 糖醋排骨 · 绵绵冰+</em><small>负责人：<b>Demi</b>, <b>Tanka</b></small></div></li>
+          <li><span class="booth-id">C24</span><div class="body"><strong>Yu Noodle</strong></div></li>
+          <li><span class="booth-id">C25</span><div class="body"><strong>East Dumpling House</strong></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- D · 舞台第一 -->
+  <section id="area-d" class="detail-view" aria-label="舞台第一 详情">
+    <div class="detail-head">
+      <div><div class="tag">Stage One</div><div class="zh">舞台第一</div><div class="en">Main Stage · D1–D9</div></div>
+      <div class="letter">D</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>舞台介绍 · About</h3>
+        <p>文化节主舞台，配备 LED 大屏幕、专业灯光与音响系统。承担开幕式、主要文艺演出、闭幕式等核心活动。位于场地东端。</p>
+        <p>The festival's main stage with LED screens and full lighting/audio production. Hosts the opening ceremony, headline performances, and closing program. Located at the east end of the venue.</p>
+        <p style="margin-top:14px;"><strong>导演组 D1–D5</strong> · Director's group<br><strong>技术 / 化妆 D6–D9</strong> · Tech &amp; Makeup</p>
+      </div>
+      <div class="card">
+        <h3>演出安排 · Program</h3>
+        <ul class="schedule" style="grid-template-columns: 110px 1fr;">
+          <li><time>10:00–12:00</time><div><strong>节目表演 · Performances</strong></div></li>
+          <li><time>1:00–2:00</time><div><strong>开幕式 · Opening Ceremony</strong></div></li>
+          <li><time>2:00–4:30</time><div><strong>节目表演 · Performances</strong></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- E · 合作伙伴展区 -->
+  <section id="area-e" class="detail-view" aria-label="合作伙伴展区 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone E</div><div class="zh">合作伙伴展区</div><div class="en">Partner Exhibits · E1–E8</div></div>
+      <div class="letter">E</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>合作伙伴展区共设 8 个展位（E1–E8），由 <b>卓教国际</b>（E1-E3）、<b>阿斯蒂星/博城中文</b>（E4）、<b>Presidential Bank</b>（E5）、<b>CCACC</b>（E6-E7）、<b>JRI Kitchen</b>（E8）等赞助伙伴入驻。位于主舞台西侧，紧邻医疗急救站。</p>
+        <p>Eight booths (E1–E8), hosted by Excellence Education International (E1-E3), 阿斯蒂星/博城中文 (E4), Presidential Bank (E5), CCACC (E6-E7), and JRI Kitchen (E8). Located west of the Main Stage, next to First Aid.</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-e); --booth-text: #1F2A0E;">
+        <h3>展位 · Booths</h3>
+        <div class="booth-grid">
+          <span style="color:#1F2A0E">E1</span><span style="color:#1F2A0E">E2</span>
+          <span style="color:#1F2A0E">E3</span><span style="color:#1F2A0E">E4</span>
+          <span style="color:#1F2A0E">E5</span><span style="color:#1F2A0E">E6</span>
+          <span style="color:#1F2A0E">E7</span><span style="color:#1F2A0E">E8</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-e); --booth-text: #1F2A0E;">
+        <h3>合作伙伴 · Partners</h3>
+        <ul class="exhibit-list">
+          <li>
+            <span class="booth-id">E1</span>
+            <div class="body">
+              <strong>卓教国际</strong>
+              <em>Excellence Education International</em>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E2</span>
+            <div class="body">
+              <strong>卓教国际</strong>
+              <em>Excellence Education International</em>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E3</span>
+            <div class="body">
+              <strong>卓教国际</strong>
+              <em>Excellence Education International</em>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E4</span>
+            <div class="body">
+              <strong>阿斯蒂星 / 博城中文</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E5</span>
+            <div class="body">
+              <strong>Presidential Bank</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E6</span>
+            <div class="body">
+              <strong>CCACC</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E7</span>
+            <div class="body">
+              <strong>CCACC</strong>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">E8</span>
+            <div class="body">
+              <strong>JRI Kitchen</strong>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- G · 舞台第二 -->
+  <section id="area-g" class="detail-view" aria-label="舞台第二 详情">
+    <div class="detail-head">
+      <div><div class="tag">Stage Two</div><div class="zh">舞台第二</div><div class="en">Stage 2 · G1–G3</div></div>
+      <div class="letter">G</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>舞台介绍 · About</h3>
+        <p>第二舞台位于场地西端（4 街西北方向），主要承担互动表演、小型演出、社区文艺节目。后台与设备区为 G1、G2、G3。</p>
+        <p>Located at the west end of the venue toward 4th Street NW. Hosts interactive performances, smaller programs, and community acts. Backstage and equipment in G1, G2, G3.</p>
+      </div>
+      <div class="card">
+        <h3>演出安排 · Program</h3>
+        <ul class="schedule">
+          <li><time>11:30</time><div><strong>[节目名称]</strong><small>表演团体</small></div></li>
+          <li><time>13:00</time><div><strong>[节目名称]</strong><small>表演团体</small></div></li>
+          <li><time>15:00</time><div><strong>[节目名称]</strong><small>表演团体</small></div></li>
+          <li><time>17:00</time><div><strong>[节目名称]</strong><small>表演团体</small></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- H · 文化节中心区 · 问讯处 -->
+  <section id="area-h" class="detail-view" aria-label="文化节中心区 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone H</div><div class="zh">文化节中心区 · 问讯处</div><div class="en">Festival Operations Center · H1–H6</div></div>
+      <div class="letter">H</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>文化节中心区是全场指挥与服务的核心枢纽，集合了指挥部、义工保安调度、文化节护照、青少年活动、绘画长卷等关键职能。</p>
+        <p>The festival's command and services hub, housing the operations center, volunteer/security coordination, festival passport program, youth activities, and the long-scroll painting station.</p>
+        <p style="margin-top:14px;">开放时间 · Hours: 11:00 AM – 7:00 PM &nbsp;·&nbsp; 8/29/2026</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-h); --booth-text: #143626;">
+        <h3>展位 · Booths</h3>
+        <div class="booth-grid">
+          <span style="color:#143626">H1</span><span style="color:#143626">H2</span>
+          <span style="color:#143626">H3</span><span style="color:#143626">H4</span>
+          <span style="color:#143626">H5</span><span style="color:#143626">H6</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-h); --booth-text: #143626;">
+        <h3>职能分工 · Stations</h3>
+        <ul class="exhibit-list">
+          <li>
+            <span class="booth-id">H1</span>
+            <div class="body">
+              <strong>义工 / 保安</strong>
+              <em>Volunteers &amp; Security</em>
+              <small>负责人：<b>缪传奇</b>, <b>杨修竹</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">H2</span>
+            <div class="body">
+              <strong>指挥部</strong>
+              <em>Command Center</em>
+              <small>负责人：<b>何洁</b>, <b>Roy Li</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">H3</span>
+            <div class="body">
+              <strong>文化节护照 · Festival Passport</strong>
+              <em>Stamp collection program — visit zones, collect stamps, redeem souvenirs</em>
+              <small>负责人：<b>李宁</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">H4</span>
+            <div class="body">
+              <strong>青少年活动</strong>
+              <em>Youth Programs</em>
+              <small>负责人：<b>李宁</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">H5</span>
+            <div class="body">
+              <strong>梅张会计所</strong>
+              <em>Mei-Zhang Accounting Firm</em>
+              <small>负责人：<b>张丽清</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">H6</span>
+            <div class="body">
+              <strong>绘画 · 中国文化节长卷绘画</strong>
+              <em>Long-Scroll Painting Activity</em>
+              <small>负责人：<b>叶承曦</b></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; border-left: 4px solid var(--zone-h);">
+        <h3>特色项目 · Featured Activity</h3>
+        <p><strong>中国文化节长卷绘画活动</strong> · Long-Scroll Painting Activity (H6)</p>
+        <p>自 2023 年起，文化节每年举办现场绘画活动。2024 年恰逢中美建交 45 周年，活动采用 45 尺长卷形式，寓意两国关系走过 45 年，此后长卷每年增加一尺。长卷绘画色彩丰富、参与自由，深受各族裔青少年喜爱，是文化节最具人气的互动项目之一。</p>
+        <p>今年新增 <strong>"各族裔共画中国龙"</strong> 环节，旨在突出中国文化元素、增强视觉冲击力，以龙为纽带促进多元文化交流。</p>
+        <p style="color: var(--ink-soft); font-size: 14px;">Since 2023, the festival has hosted a live painting activity. In 2024 — the 45th anniversary of US–China diplomatic relations — a 45-foot scroll was used, with one foot added each year since. The activity is colorful, open to all, and beloved by youth from every ethnic background. This year introduces "Painting the Chinese Dragon Together" — a multi-ethnic collaborative segment celebrating cultural exchange.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- V · 后勤保障 -->
+  <section id="area-v" class="detail-view" aria-label="后勤保障 详情">
+    <div class="detail-head">
+      <div><div class="tag">Zone V</div><div class="zh">后勤保障</div><div class="en">Logistics Support · V1–V6</div></div>
+      <div class="letter">V</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>后勤保障区是全场后勤保障与活动摄影的工作中心，共 6 个工作位（V1–V6）。V1–V4 负责场地运营与物资管理，V5–V6 负责现场摄影记录。</p>
+        <p>Backstage operations including logistics and event photography. Six work stations (V1–V6): V1–V4 handle site operations and supply management, V5–V6 handle on-site photography.</p>
+      </div>
+      <div class="card" style="--booth: var(--zone-v); --booth-text: #143626;">
+        <h3>展位 · Stations</h3>
+        <div class="booth-grid">
+          <span style="color:#143626">V1</span><span style="color:#143626">V2</span>
+          <span style="color:#143626">V3</span><span style="color:#143626">V4</span>
+          <span style="color:#143626">V5</span><span style="color:#143626">V6</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1; --booth: var(--zone-v); --booth-text: #143626;">
+        <h3>职能分工 · Stations</h3>
+        <ul class="exhibit-list">
+          <li>
+            <span class="booth-id">V1</span>
+            <div class="body">
+              <strong>后勤</strong>
+              <em>Logistics</em>
+              <small>负责人：<b>蔡春生</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">V2</span>
+            <div class="body">
+              <strong>后勤</strong>
+              <em>Logistics</em>
+              <small>负责人：<b>蔡春生</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">V3</span>
+            <div class="body">
+              <strong>后勤</strong>
+              <em>Logistics</em>
+              <small>负责人：<b>蔡春生</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">V4</span>
+            <div class="body">
+              <strong>后勤</strong>
+              <em>Logistics</em>
+              <small>负责人：<b>蔡春生</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">V5</span>
+            <div class="body">
+              <strong>摄影</strong>
+              <em>Event Photography</em>
+              <small>负责人：<b>孙宏</b></small>
+            </div>
+          </li>
+          <li>
+            <span class="booth-id">V6</span>
+            <div class="body">
+              <strong>摄影</strong>
+              <em>Event Photography</em>
+              <small>负责人：<b>孙宏</b></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <h3>紧急联系 · Emergency</h3>
+        <p>现场总指挥 / Site Coordinator: 见 H2 指挥部 (See H2 Command Center) — <b>何洁</b>, <b>Roy Li</b><br>义工 / 保安调度 / Volunteer &amp; Security Dispatch: 见 H1 — <b>缪传奇</b>, <b>杨修竹</b><br>紧急电话 / Emergency: <b>911</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIP · VIP接待区 -->
+  <section id="area-vip" class="detail-view" aria-label="VIP 接待区 详情">
+    <div class="detail-head">
+      <div><div class="tag">VIP</div><div class="zh">VIP 接待区</div><div class="en">VIP Reception</div></div>
+      <div class="letter">★</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>区域介绍 · About</h3>
+        <p>VIP 嘉宾接待与休息区。仅限受邀嘉宾、贵宾、合作伙伴入内。由专业嘉宾接待组负责，提供茶艺展示、茶点服务、引导迎宾及现场协调等服务。位于场地东侧，紧邻主舞台与中华文化展示区 B11–B18。</p>
+        <p>Reception and lounge for invited VIPs, dignitaries, and partners. Access by invitation only. Staffed by a dedicated reception team providing tea ceremony demonstrations, refreshments, greeting service, and on-site coordination. Located on the east side, next to the Main Stage and Cultural Showcase B11–B18.</p>
+      </div>
+      <div class="card">
+        <h3>组长 · Leadership</h3>
+        <ul class="vendor-list">
+          <li><strong>李民</strong><small>组长 · Group Leader</small></li>
+          <li><strong>梁瑞莲</strong><small>副组长 · Deputy Leader</small></li>
+        </ul>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <h3>嘉宾接待组工作分工 · Reception Team Roles</h3>
+        <ul class="vendor-list">
+          <li>
+            <strong>茶艺展示 · Tea Ceremony Demonstration</strong>
+            <small><b>张馨</b></small>
+          </li>
+          <li>
+            <strong>茶点服务 · Tea Refreshment Service</strong>
+            <small><b>朱思敏</b></small>
+          </li>
+          <li>
+            <strong>引导 / 迎宾服务 · Greeting &amp; Guidance</strong>
+            <small><b>侯胜泽</b> &nbsp;·&nbsp; <b>凯迪莉叶</b> &nbsp;·&nbsp; <b>Isabella Gattuso</b></small>
+          </li>
+          <li>
+            <strong>协调 / 应急 · Coordination &amp; Emergency</strong>
+            <small><b>孙竹青</b></small>
+          </li>
+          <li>
+            <strong>协调 / 指导 · Coordination &amp; Guidance</strong>
+            <small><b>Karina Hou</b></small>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- M · 医疗急救 -->
+  <section id="area-m" class="detail-view" aria-label="医疗急救 详情">
+    <div class="detail-head">
+      <div><div class="tag">Medical</div><div class="zh">医疗急救站</div><div class="en">First Aid Station</div></div>
+      <div class="letter">+</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>服务内容 · Services</h3>
+        <p>由专业急救人员驻守。提供常见伤病处理、防暑降温、儿童意外救助、常用药品。位于合作伙伴展区 E 旁。</p>
+        <p>Staffed by trained EMS personnel. Minor injuries, heat-related care, pediatric first aid, and common medications. Located next to the Partner Exhibits (Zone E).</p>
+      </div>
+      <div class="card">
+        <h3>紧急情况 · Emergency</h3>
+        <p>如遇严重医疗紧急情况，请立即拨打 <strong>911</strong>，并通知最近的工作人员（红色背心）。</p>
+        <p>For serious medical emergencies, dial <strong>911</strong> immediately and alert the nearest staff member (red vest).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech · Tech Booth -->
+  <section id="area-tech" class="detail-view" aria-label="Tech Booth 详情">
+    <div class="detail-head">
+      <div><div class="tag">Tech</div><div class="zh">技术服务台</div><div class="en">Tech Booth</div></div>
+      <div class="letter">⚙</div>
+    </div>
+    <div class="detail-grid">
+      <div class="card">
+        <h3>服务内容 · Services</h3>
+        <p>技术服务台提供现场音视频、网络、移动电源、广播系统、舞台设备等技术支持。位于文创市集 A 区中部。</p>
+        <p>On-site support for A/V, network, charging stations, PA system, and stage equipment. Located in the middle of the Creative Market (Zone A).</p>
+      </div>
+      <div class="card">
+        <h3>联系方式 · Contact</h3>
+        <p>技术负责人 / Tech Lead: [姓名 · Name]<br>对讲机频道 / Radio: [频道号 · Channel]</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="zh">第24届华盛顿中国文化节 · 8/29/2026 · 3rd-4th St. Constitution Ave. NW, Washington DC</span>
+  <span class="en">24th Washington China Culture Festival</span>
+</footer>
+
+<!-- =========================================================
+     Optional JS: sync hover between legend and map hotspots.
+     The page works without it.
+     ========================================================= -->
+<script>
+(function () {
+  const overlay = document.querySelector('.map-overlay');
+  if (!overlay) return;
+
+  // When you hover a legend item, highlight the matching hotspot.
+  document.querySelectorAll('.legend a[data-zone]').forEach(item => {
+    const zone = item.getAttribute('data-zone');
+    const targets = overlay.querySelectorAll('a[data-zone="' + zone + '"]');
+    const on  = () => targets.forEach(t => t.classList.add('is-highlighted'));
+    const off = () => targets.forEach(t => t.classList.remove('is-highlighted'));
+    item.addEventListener('mouseenter', on);
+    item.addEventListener('mouseleave', off);
+    item.addEventListener('focus',  on);
+    item.addEventListener('blur',   off);
+  });
+})();
+</script>
 
 </body>
 </html>
