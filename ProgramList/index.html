@@ -64,6 +64,12 @@ html, body {
     gap: 6px;
 
     z-index: 10;
+    transition: opacity 0.25s ease;
+}
+
+.toolbar.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .toolbar a {
@@ -165,6 +171,8 @@ slider.addEventListener("scroll", () => {
     dots.forEach((dot, index) => {
         dot.classList.toggle("active", index === page);
     });
+
+    toolbar.classList.toggle("hidden", page !== 0);
 
 });
 
