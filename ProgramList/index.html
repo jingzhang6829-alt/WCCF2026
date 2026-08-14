@@ -63,10 +63,10 @@ html, body {
     scrollbar-width: none;
 }
 
-/* PROGRAM 字样下方按钮 */
+/* 顶部导航按钮 */
 .toolbar {
     position: fixed;
-    top: 44%;
+    top: 10px;
     left: 0;
     right: 0;
 
@@ -131,8 +131,8 @@ html, body {
 
 <div class="slider" id="slider">
 
-    <div class="slide" id="coverSlide">
-        <img src="Page1.png" alt="封面" id="coverImg">
+    <div class="slide">
+        <img src="Page1.png" alt="封面">
     </div>
 
     <div class="slide" id="Slide2">
@@ -177,31 +177,6 @@ slider.addEventListener("scroll", () => {
     });
 
 });
-
-/* 按钮跟随封面图中 "PROGRAM" 字样下方位置 */
-const coverSlide = document.getElementById("coverSlide");
-const coverImg = document.getElementById("coverImg");
-const toolbar = document.getElementById("toolbar");
-const TARGET_IMG_Y = 508; // page1.png 原图中 "PROGRAM" 副标题下方的像素位置（图片尺寸 832x1248）
-
-function positionToolbar() {
-    if (!coverImg.naturalWidth) return;
-
-    const cw = coverSlide.clientWidth;
-    const ch = coverSlide.clientHeight;
-    const scale = Math.min(cw / coverImg.naturalWidth, ch / coverImg.naturalHeight);
-    const dispH = coverImg.naturalHeight * scale;
-    const offsetY = (ch - dispH) / 2;
-
-    toolbar.style.top = (offsetY + TARGET_IMG_Y * scale) + "px";
-}
-
-if (coverImg.complete) {
-    positionToolbar();
-} else {
-    coverImg.addEventListener("load", positionToolbar);
-}
-window.addEventListener("resize", positionToolbar);
 </script>
 
 </body>
