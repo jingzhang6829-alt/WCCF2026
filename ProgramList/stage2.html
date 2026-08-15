@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>第二舞台互动区节目单</title>
+
+<style>
+:root {
+    --paper:   #EAF3FB;
+    --paper2:  #F6FAFD;
+    --ink:     #1B3A5C;
+    --ink-soft:#4C6C8C;
+    --accent:  #2E6DA4;
+    --accent-dark: #163C6E;
+    --line:    #BBD6EC;
+    --row-alt: #E1EEF8;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: var(--accent-dark);
+    color: var(--ink);
+    font-family: "Songti SC", "STSong", "Microsoft YaHei", "PingFang SC", serif;
+}
+
+.back {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 16px;
+    background: rgba(22,60,110,0.75);
+    color: #fff;
+    font-size: 13px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(3px);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.sheet {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 26px 14px 50px;
+    background:
+        radial-gradient(ellipse at top left, #ffffff 0%, var(--paper) 55%, var(--paper) 100%);
+}
+
+.frame {
+    position: relative;
+    border: 3px double var(--accent);
+    border-radius: 4px;
+    padding: 26px 18px 30px;
+    background: var(--paper2);
+}
+
+.frame::before,
+.frame::after,
+.frame .corner-br,
+.frame .corner-bl {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--accent);
+}
+.frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+.frame::after  { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+.frame .corner-bl { bottom: -3px; left: -3px; border-right: none; border-top: none; }
+.frame .corner-br { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+.title-block {
+    text-align: center;
+}
+
+.title-block .zh {
+    margin: 0;
+    font-size: clamp(22px, 6vw, 30px);
+    font-weight: 900;
+    color: var(--accent-dark);
+    letter-spacing: .04em;
+}
+
+.title-block .en {
+    margin: 6px 0 0;
+    font-size: 13px;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+    font-family: "Times New Roman", serif;
+}
+
+.program-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 6px;
+}
+.program-tag .swirl {
+    color: var(--accent);
+    font-size: 16px;
+    opacity: .7;
+}
+.program-tag .label {
+    font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 800;
+    color: var(--accent-dark);
+}
+.program-tag .label .en {
+    font-family: "Times New Roman", serif;
+    font-weight: 600;
+    font-size: 0.75em;
+    color: var(--accent);
+    margin-left: 6px;
+}
+
+.meta-line {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin: 4px 0 10px;
+}
+
+.theme-line {
+    text-align: center;
+    margin: 6px 0 18px;
+    font-size: 14px;
+    color: var(--accent-dark);
+}
+.theme-line b { color: var(--accent); }
+
+.session-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 26px 0 10px;
+}
+.session-title .diamond {
+    color: var(--accent);
+    font-size: 12px;
+}
+.session-title .zh {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--accent-dark);
+}
+.session-title .en {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-family: "Times New Roman", serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-bottom: 4px;
+}
+
+thead th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    padding: 8px 6px;
+    border: 1px solid var(--accent);
+    white-space: nowrap;
+}
+
+td {
+    border: 1px solid var(--line);
+    padding: 8px 6px;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) td {
+    background: var(--row-alt);
+}
+
+td.no {
+    text-align: center;
+    font-weight: 700;
+    color: var(--accent);
+    width: 28px;
+}
+
+td.time {
+    white-space: nowrap;
+    text-align: center;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+td.activity strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+td.dur {
+    white-space: nowrap;
+    text-align: center;
+    color: var(--accent-dark);
+}
+
+footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: .08em;
+}
+</style>
+</head>
+
+<body>
+
+<a class="back" href="index.html">&larr; 返回首页</a>
+
+<div class="sheet">
+  <div class="frame">
+    <span class="corner-bl"></span><span class="corner-br"></span>
+
+    <div class="title-block">
+      <p class="zh">第24届华盛顿中国文化节</p>
+      <p class="en">The 24th Washington Chinese Cultural Festival</p>
+    </div>
+
+    <div class="program-tag">
+      <span class="swirl">❖</span>
+      <span class="label">第二舞台互动区节目单<span class="en">Stage 2 Program</span></span>
+      <span class="swirl">❖</span>
+    </div>
+
+    <p class="meta-line">日期：2026年8月29日（星期六）&nbsp;·&nbsp; Sat, Aug 29, 2026<br>地点：中国文化节第二舞台互动区&nbsp;·&nbsp; Stage 2 Interactive Zone</p>
+
+    <p class="theme-line">活动主题 Theme：<b>参与 · 互动 · 体验中华文化</b></p>
+
+    <div class="session-title">
+      <span class="diamond">◆</span>
+      <span class="zh">上午场（10:00 AM – 12:50 PM）</span>
+      <span class="en">Morning Session</span>
+      <span class="diamond">◆</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>序号</th><th>时间</th><th>活动内容</th><th>时长</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="no">1</td><td class="time">10:00–10:05</td><td class="activity">主持人开场、介绍全天互动项目及打卡规则</td><td class="dur">5分钟</td></tr>
+        <tr><td class="no">2</td><td class="time">10:05–10:25</td><td class="activity">竹竿舞 第一场（现场教学+互动）</td><td class="dur">20分钟</td></tr>
+        <tr><td class="no">3</td><td class="time">10:25–10:45</td><td class="activity">百人太极（游客参与）</td><td class="dur">20分钟</td></tr>
+        <tr><td class="no">4</td><td class="time">10:45–11:10</td><td class="activity">舞蹈快闪 PK 第一场（观众挑战及投票）</td><td class="dur">25分钟</td></tr>
+        <tr><td class="no">5</td><td class="time">11:10–11:40</td><td class="activity">百人热舞（游客参与大型互动）</td><td class="dur">30分钟</td></tr>
+        <tr><td class="no">6</td><td class="time">11:40–12:10</td><td class="activity">华府好声音 PK 第一场</td><td class="dur">30分钟</td></tr>
+        <tr><td class="no">7</td><td class="time">12:10–12:45</td><td class="activity">华服巡游+拍照互动</td><td class="dur">35分钟</td></tr>
+        <tr><td class="no">8</td><td class="time">12:45–12:50</td><td class="activity">主持人宣布下午活动预告、抽奖互动</td><td class="dur">5分钟</td></tr>
+      </tbody>
+    </table>
+
+    <div class="session-title">
+      <span class="diamond">◆</span>
+      <span class="zh">下午场（2:00 PM – 4:30 PM）</span>
+      <span class="en">Afternoon Session</span>
+      <span class="diamond">◆</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>序号</th><th>时间</th><th>活动内容</th><th>时长</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="no">1</td><td class="time">2:00–2:05</td><td class="activity">主持人开场 大型交响乐</td><td class="dur">5分钟</td></tr>
+        <tr><td class="no">2</td><td class="time">2:05–2:25</td><td class="activity">百人太极第二场（游客参与）</td><td class="dur">20分钟</td></tr>
+        <tr><td class="no">3</td><td class="time">2:25–2:45</td><td class="activity">竹竿舞第二场（现场教学+互动）</td><td class="dur">20分钟</td></tr>
+        <tr><td class="no">4</td><td class="time">2:45–3:10</td><td class="activity">百人热舞第二场</td><td class="dur">25分钟</td></tr>
+        <tr><td class="no">5</td><td class="time">3:10–3:40</td><td class="activity">舞蹈快闪 PK 第二场</td><td class="dur">30分钟</td></tr>
+        <tr><td class="no">6</td><td class="time">3:40–4:10</td><td class="activity">华府好声音 PK 第二场</td><td class="dur">30分钟</td></tr>
+        <tr><td class="no">7</td><td class="time">4:10–4:25</td><td class="activity">华服巡游+大合影</td><td class="dur">15分钟</td></tr>
+        <tr><td class="no">8</td><td class="time">4:25–4:30</td><td class="activity">幸运抽奖领奖、闭幕致谢</td><td class="dur">5分钟</td></tr>
+      </tbody>
+    </table>
+
+    <footer>WASHINGTON CHINESE CULTURAL FESTIVAL · 2026</footer>
+  </div>
+</div>
+
+</body>
+</html>
