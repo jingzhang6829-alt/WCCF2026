@@ -5,158 +5,304 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-<title>第24届华盛顿中国文化节组委会人员表</title>
+<title>2026文化节负责人名单</title>
 
 <style>
+:root {
+    --paper:   #EAF6EC;
+    --paper2:  #F6FBF7;
+    --ink:     #1E4B2E;
+    --ink-soft:#4C6E58;
+    --accent:  #3E9A5E;
+    --accent-dark: #1F5C38;
+    --line:    #BEE0C8;
+    --row-alt: #E2F3E6;
+}
+
+* { box-sizing: border-box; }
+
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    background: #000;
-    color: #fff;
-    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-}
-
-.header {
-    position: sticky;
-    top: 0;
-    background: rgba(0,0,0,0.9);
-    backdrop-filter: blur(4px);
-    padding: 14px 12px 10px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    z-index: 10;
-}
-
-.header h1 {
-    margin: 0 0 8px;
-    font-size: 18px;
+    background: var(--accent-dark);
+    color: var(--ink);
+    font-family: "Songti SC", "STSong", "Microsoft YaHei", "PingFang SC", serif;
 }
 
 .back {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
     display: inline-block;
-    padding: 5px 14px;
+    padding: 6px 14px;
     border-radius: 16px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(31,92,56,0.75);
     color: #fff;
     font-size: 13px;
     text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(3px);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
-.content {
-    padding: 4px 8px 40px;
+.sheet {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 26px 14px 50px;
+    background:
+        radial-gradient(ellipse at top left, #ffffff 0%, var(--paper) 55%, var(--paper) 100%);
 }
 
-.group {
-    margin: 20px 0;
+.frame {
+    position: relative;
+    border: 3px double var(--accent);
+    border-radius: 4px;
+    padding: 26px 18px 30px;
+    background: var(--paper2);
 }
 
-.group h2 {
+.frame::before,
+.frame::after,
+.frame .corner-br,
+.frame .corner-bl {
+    content: "";
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--accent);
+}
+.frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+.frame::after  { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+.frame .corner-bl { bottom: -3px; left: -3px; border-right: none; border-top: none; }
+.frame .corner-br { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+.title-block {
+    text-align: center;
+}
+
+.title-block .zh {
+    margin: 0;
+    font-size: clamp(22px, 6vw, 30px);
+    font-weight: 900;
+    color: var(--accent-dark);
+    letter-spacing: .04em;
+}
+
+.title-block .en {
+    margin: 6px 0 0;
+    font-size: 13px;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+    font-family: "Times New Roman", serif;
+}
+
+.program-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 6px;
+}
+.program-tag .swirl {
+    color: var(--accent);
     font-size: 16px;
-    margin: 0 0 6px 4px;
-    color: #ffd54a;
-    border-left: 4px solid #ffd54a;
-    padding-left: 8px;
+    opacity: .7;
+}
+.program-tag .label {
+    font-size: clamp(18px, 4.5vw, 22px);
+    font-weight: 800;
+    color: var(--accent-dark);
+}
+.program-tag .label .en {
+    font-family: "Times New Roman", serif;
+    font-weight: 600;
+    font-size: 0.75em;
+    color: var(--accent);
+    margin-left: 6px;
 }
 
-.sub-note {
+.meta-line {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin: 4px 0 18px;
+}
+
+.session-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 26px 0 10px;
+}
+.session-title .diamond {
+    color: var(--accent);
     font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    margin: 0 0 8px 12px;
+}
+.session-title .zh {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-dark);
+}
+.session-title .en {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: "Times New Roman", serif;
+}
+
+.sub-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 16px 0 6px 2px;
+    padding-left: 8px;
+    border-left: 3px solid var(--accent);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
-    background: rgba(255,255,255,0.05);
+    font-size: 12.5px;
+    margin-bottom: 4px;
 }
 
-th, td {
-    border: 1px solid rgba(255,255,255,0.2);
-    padding: 6px 6px;
-    text-align: left;
-    vertical-align: top;
-    word-break: break-word;
-}
-
-th {
-    background: rgba(255,255,255,0.12);
+thead th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    padding: 8px 6px;
+    border: 1px solid var(--accent);
     white-space: nowrap;
 }
 
-tr:nth-child(even) td {
-    background: rgba(255,255,255,0.03);
+td {
+    border: 1px solid var(--line);
+    padding: 8px 6px;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) td {
+    background: var(--row-alt);
+}
+
+td.no {
+    text-align: center;
+    font-weight: 700;
+    color: var(--accent);
+    width: 26px;
+}
+
+td.unit strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+td.role {
+    text-align: left;
+    color: var(--ink-soft);
+}
+
+td.name {
+    color: var(--accent-dark);
+    font-weight: 600;
+}
+
+footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: .08em;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h1>组委会人员表</h1>
-    <a class="back" href="index.html">&larr; 返回首页</a>
-</div>
+<a class="back" href="index.html">&larr; 返回首页</a>
 
-<div class="content">
+<div class="sheet">
+  <div class="frame">
+    <span class="corner-bl"></span><span class="corner-br"></span>
 
-<div class="group">
-    <h2>一、领导与统筹管理层</h2>
+    <div class="title-block">
+      <p class="zh">第24届华盛顿中国文化节</p>
+      <p class="en">The 24th Washington Chinese Cultural Festival</p>
+    </div>
+
+    <div class="program-tag">
+      <span class="swirl">❖</span>
+      <span class="label">2026文化节负责人名单<span class="en">Roster</span></span>
+      <span class="swirl">❖</span>
+    </div>
+
+    <p class="meta-line">组织委员会 · Organizing Committee</p>
+
+    <div class="session-title">
+      <span class="diamond">◆</span>
+      <span class="zh">一、领导层</span>
+      <span class="en">Leadership</span>
+      <span class="diamond">◆</span>
+    </div>
     <table>
-        <tr><th>单位/小组</th><th>职位</th><th>姓名</th></tr>
-        <tr><td>联席会议主席团（核心决策层）</td><td>执行主席</td><td>徐江</td></tr>
-        <tr><td>项目管理办公室（综合协调层）</td><td>秘书组组长</td><td>何洁</td></tr>
-    </table>
-</div>
-
-<div class="group">
-    <h2>二、四大专业执行部门</h2>
-
-    <h2 style="font-size:14px; border-left-color:#7DB59E; margin-top:16px;">3. 现场执行与技术工程部</h2>
-    <table>
-        <tr><th>单位/小组</th><th>职位</th><th>姓名</th></tr>
-        <tr><td>工程组</td><td>组长</td><td>许纲</td></tr>
-        <tr><td>技术组</td><td>组长</td><td>徐洪庆</td></tr>
-        <tr><td>后勤组</td><td>组长</td><td>蔡春生</td></tr>
-        <tr><td>安保组</td><td>组长</td><td>杨修竹</td></tr>
-        <tr><td>义工组</td><td>组长</td><td>缪传奇</td></tr>
-        <tr><td>摄影摄像组</td><td>组长</td><td>李菲</td></tr>
-        <tr><td>视觉设计组</td><td>组长</td><td>叶承曦</td></tr>
-    </table>
-
-    <h2 style="font-size:14px; border-left-color:#C9A85A; margin-top:16px;">4. 文化活动与内容体验部</h2>
-    <table>
-        <tr><th>单位/小组</th><th>职位</th><th>姓名</th></tr>
-        <tr><td>开幕庆典组</td><td>组长</td><td>夏翔波</td></tr>
-        <tr><td>第一舞台文艺演出组</td><td>组长</td><td>穆建西</td></tr>
-        <tr><td>第二舞台与互动组</td><td>组长</td><td>张乐</td></tr>
-        <tr><td>嘉宾接待组</td><td>组长</td><td>李民</td></tr>
-        <tr><td>青少年委员会</td><td>主任</td><td>李宁</td></tr>
-        <tr><td>文化体验组</td><td>共同组长</td><td>苏丽娟、李晓、田晶</td></tr>
-        <tr><td>绘画互动组</td><td>组长</td><td>叶承曦</td></tr>
-        <tr><td>美食组</td><td>组长</td><td>王博</td></tr>
+      <thead>
+        <tr><th>序号</th><th>职务</th><th>姓名</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="no">1</td><td class="role">共同主席</td><td class="name">王孟琛、黄河、缪传奇、徐江、肖水根、李宁、刘胜、杨修竹、李奇力、姜岳洋</td></tr>
+        <tr><td class="no">2</td><td class="role">顾问团主席</td><td class="name">何晓慧</td></tr>
+        <tr><td class="no">3</td><td class="role">执行主席</td><td class="name">徐江</td></tr>
+        <tr><td class="no">4</td><td class="role">执行副主席</td><td class="name">王孟琛、姜岳洋、李民</td></tr>
+        <tr><td class="no">5</td><td class="role">秘书长</td><td class="name">何洁</td></tr>
+        <tr><td class="no">6</td><td class="role">公共传播与参与委员会主任（对外）</td><td class="name">Karina Hou</td></tr>
+        <tr><td class="no">7</td><td class="role">公共传播与参与委员会主任（对内）</td><td class="name">胡荣华</td></tr>
+        <tr><td class="no">8</td><td class="role">青少年委员会主任</td><td class="name">李宁</td></tr>
+      </tbody>
     </table>
 
-    <h2 style="font-size:14px; border-left-color:#8AA85F; margin-top:16px;">5. 外联宣传与公共关系部</h2>
+    <div class="session-title">
+      <span class="diamond">◆</span>
+      <span class="zh">二、各小组负责人</span>
+      <span class="en">Team Leads</span>
+      <span class="diamond">◆</span>
+    </div>
     <table>
-        <tr><th>单位/小组</th><th>职位</th><th>姓名</th></tr>
-        <tr><td>许可申报组</td><td>组长</td><td>肖水根</td></tr>
-        <tr><td>公共传播与参与委员会</td><td>对外负责人</td><td>Karina Hou</td></tr>
-        <tr><td>公共传播与参与委员会</td><td>对内负责人</td><td>胡荣华</td></tr>
-        <tr><td>宣传组</td><td>组长</td><td>黄静</td></tr>
+      <thead>
+        <tr><th>序号</th><th>职务</th><th>姓名</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="no">1</td><td class="role">第一舞台文艺演出组组长</td><td class="name">穆建西</td></tr>
+        <tr><td class="no">2</td><td class="role">第一舞台总导演</td><td class="name">胡宏</td></tr>
+        <tr><td class="no">3</td><td class="role">第二舞台与互动组组长</td><td class="name">张乐</td></tr>
+        <tr><td class="no">4</td><td class="role">宣传组组长</td><td class="name">黄静</td></tr>
+        <tr><td class="no">5</td><td class="role">秘书组组长（兼）</td><td class="name">何洁</td></tr>
+        <tr><td class="no">6</td><td class="role">视觉设计组组长</td><td class="name">叶承曦</td></tr>
+        <tr><td class="no">7</td><td class="role">许可申报组组长</td><td class="name">肖水根</td></tr>
+        <tr><td class="no">8</td><td class="role">开幕庆典组组长</td><td class="name">夏祥波</td></tr>
+        <tr><td class="no">9</td><td class="role">嘉宾接待组组长</td><td class="name">李民</td></tr>
+        <tr><td class="no">10</td><td class="role">财务组组长</td><td class="name">刘胜</td></tr>
+        <tr><td class="no">11</td><td class="role">美食组组长</td><td class="name">王博</td></tr>
+        <tr><td class="no">12</td><td class="role">赞助筹款组组长</td><td class="name" style="font-style:italic; color:var(--ink-soft); font-weight:400;">暂时空缺</td></tr>
+        <tr><td class="no">13</td><td class="role">摊位招商组组长</td><td class="name">夏祥波</td></tr>
+        <tr><td class="no">14</td><td class="role">海外招商组组长</td><td class="name">李传明</td></tr>
+        <tr><td class="no">15</td><td class="role">摄影摄像组组长</td><td class="name">李菲</td></tr>
+        <tr><td class="no">16</td><td class="role">技术组组长</td><td class="name">徐洪庆</td></tr>
+        <tr><td class="no">17</td><td class="role">工程组组长</td><td class="name">许纲</td></tr>
+        <tr><td class="no">18</td><td class="role">后勤组组长</td><td class="name">蔡春生</td></tr>
+        <tr><td class="no">19</td><td class="role">安保组组长</td><td class="name">杨修竹</td></tr>
+        <tr><td class="no">20</td><td class="role">义工组组长</td><td class="name">缪传奇</td></tr>
+        <tr><td class="no">21</td><td class="role">文化体验组（共同组长）</td><td class="name">苏丽娟（希望）、李晓（美中）、田晶（哈维）</td></tr>
+        <tr><td class="no">22</td><td class="role">作文比赛组</td><td class="name">李峰</td></tr>
+        <tr><td class="no">23</td><td class="role">绘画互动组组长</td><td class="name">叶承曦</td></tr>
+      </tbody>
     </table>
 
-    <h2 style="font-size:14px; border-left-color:#8B5A4A; margin-top:16px;">6. 招商筹款与商务财务部</h2>
-    <table>
-        <tr><th>单位/小组</th><th>职位</th><th>姓名</th></tr>
-        <tr><td>摊位招商组</td><td>组长</td><td>夏翔波</td></tr>
-        <tr><td>赞助筹款组</td><td>组长</td><td>李卉</td></tr>
-        <tr><td>海外招商组</td><td>组长</td><td>李传明</td></tr>
-        <tr><td>财务组</td><td>组长</td><td>刘胜</td></tr>
-    </table>
-</div>
-
+    <footer>WASHINGTON CHINESE CULTURAL FESTIVAL · 2026</footer>
+  </div>
 </div>
 
 </body>
