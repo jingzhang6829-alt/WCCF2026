@@ -211,6 +211,20 @@ td.name {
     font-weight: 600;
 }
 
+table.leadership {
+    table-layout: fixed;
+}
+table.leadership th:first-child,
+table.leadership td.no {
+    width: 10%;
+}
+table.leadership th:nth-child(2),
+table.leadership th:nth-child(3),
+table.leadership td.role,
+table.leadership td.name {
+    width: 45%;
+}
+
 footer {
     text-align: center;
     margin-top: 24px;
@@ -248,7 +262,7 @@ footer {
       <span class="en">Leadership</span>
       <span class="diamond">◆</span>
     </div>
-    <table>
+    <table class="leadership">
       <thead>
         <tr><th>序号</th><th>职务</th><th>姓名</th></tr>
       </thead>
