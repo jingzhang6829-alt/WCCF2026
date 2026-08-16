@@ -116,6 +116,33 @@ html, body {
     color: #f3ead9;
 }
 
+/* ---------- 首页：路线图 ---------- */
+.slide.home-slide {
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    background: #0b0d09;
+}
+
+.slide.home-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.home-hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 34px;
+    z-index: 2;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+    pointer-events: none;
+}
+
 /* 每天不同的主题渐变 */
 .slide.region-flight    { background: linear-gradient(160deg, #1a2140, #0f1428 60%, #10120e); }
 .slide.region-nairobi   { background: linear-gradient(160deg, #2b3a4a, #16202b 60%, #10120e); }
@@ -371,6 +398,12 @@ html, body {
 const startDate = "2026-08-16";
 
 const days = [
+// ---------------- 首页：路线图 ----------------
+{
+    type: "home",
+    image: "tripmap.jpg",
+    hint: "肯尼亚 + 坦桑尼亚 游猎路线图 &nbsp;·&nbsp; 向左滑动开始查看每日行程 →"
+},
 // ---------------- Day 0：华盛顿 IAD 出发 ----------------
 {
     dayNum: 0,
@@ -607,15 +640,42 @@ const dotsEl = document.getElementById("dots");
 const daybarEl = document.getElementById("daybar");
 const sub = document.getElementById("subHeader");
 
+const numberedDays = days.filter(day => day.type !== "home");
 const firstDate = fmtDate(startDate, 0);
-const lastDate = fmtDate(startDate, days.length - 1);
-sub.textContent = firstDate.label + " ~ " + lastDate.label + " · 共" + days.length + "天";
+const lastDate = fmtDate(startDate, numberedDays.length - 1);
+sub.textContent = firstDate.label + " ~ " + lastDate.label + " · 共" + numberedDays.length + "天";
+
+let dateOffset = 0;
 
 days.forEach((day, i) => {
-    const d = fmtDate(startDate, i);
-
     // slide
     const slide = document.createElement("div");
+
+    if (day.type === "home") {
+        slide.className = "slide home-slide";
+        slide.id = "home";
+        slide.innerHTML =
+            '<img src="' + day.image + '" alt="行程路线图">' +
+            '<div class="home-hint">' + day.hint + '</div>';
+        slider.appendChild(slide);
+
+        const dot = document.createElement("div");
+        dot.className = "dot active";
+        dotsEl.appendChild(dot);
+
+        const btn = document.createElement("button");
+        btn.textContent = "\u{1F3E0}";
+        btn.className = "active";
+        btn.addEventListener("click", () => {
+            slide.scrollIntoView({ behavior: "smooth", inline: "start" });
+        });
+        daybarEl.appendChild(btn);
+        return;
+    }
+
+    const d = fmtDate(startDate, dateOffset);
+    dateOffset++;
+
     slide.className = "slide region-" + day.region;
     slide.id = "day" + day.dayNum;
 
@@ -660,13 +720,13 @@ days.forEach((day, i) => {
 
     // dot
     const dot = document.createElement("div");
-    dot.className = "dot" + (i === 0 ? " active" : "");
+    dot.className = "dot";
     dotsEl.appendChild(dot);
 
     // daybar button
     const btn = document.createElement("button");
     btn.textContent = String(day.dayNum);
-    btn.className = i === 0 ? "active" : "";
+    btn.className = "";
     btn.addEventListener("click", () => {
         slide.scrollIntoView({ behavior: "smooth", inline: "start" });
     });
